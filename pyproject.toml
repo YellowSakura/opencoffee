@@ -1,0 +1,35 @@
+[tool.poetry]
+name = "opencoffee"
+version = "0.9.1"
+description = "It takes all the members in a Slack channel and randomly pairs them up for a coffee date"
+authors = ["Yellow Sakura <dev@yellowsakura.com>"]
+readme = "README.md"
+license = "MIT"
+homepage = "https://www.yellowsakura.com"
+repository = "https://github.com/YellowSakura/opencoffee"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+argparse = "^1.4.0"
+slack-sdk = "^3.21.3"
+tqdm = "^4.65.0"
+
+[tool.poetry.dev-dependencies]
+mypy = "^1.4.1"
+poethepoet = "^0.21.1"
+pylint = "^2.17.4"
+pytest = "^7.4.0"
+types-tqdm = "^4.65.0.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poe.tasks]
+mypy = "poetry run mypy opencoffee/ tests/"
+pylint = "poetry run pylint opencoffee/* tests/*"
+pytest = "poetry run pytest"
+quality = ["mypy", "pylint", "pytest"]
+
+[tool.poetry.scripts]
+main = "opencoffee:main"

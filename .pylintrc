@@ -1,0 +1,8 @@
+[FORMAT]
+max-line-length = 120
+
+disable =
+    C0114 # missing-module-docstring
+
+good-names =
+    e     # invalid-name, the text "e" is used only for exceptions

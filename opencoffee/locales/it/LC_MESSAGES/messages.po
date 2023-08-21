@@ -1,0 +1,17 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2023-08-19 15:31+0200\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+#: opencoffee/__init__.py:155
+msgid ""
+":wave: hi <!here>, sometimes it can be difficult to know all your colleagues, so I take care of creating opportunities for a :coffee: and a chat among all members in <#%s>.\n"
+"What do you think about a time to get to know each other better?"
+msgstr ":wave: ciao <!here>, a volte può essere difficile conoscere tutti i colleghi, così io mi occupo di creare delle occasioni per un :coffee: e due chiacchiere tra tutti i membri in <#%s>.\nChe ne dite di fissare un momento per conoscersi un po' meglio?"
+
+#: opencoffee/__init__.py:205
+msgid ":slightly_smiling_face: hi <!here>, have you had the chance to schedule a time for a :coffee: and a chat?"
+msgstr ":slightly_smiling_face: ciao <!here>, avete già avuto occasione di fissare un momento per un :coffee: e due chiacchiere?"
