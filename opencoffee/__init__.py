@@ -37,7 +37,7 @@ def main():
     # Read and check configuration file -->
     config = configparser.ConfigParser()
     if len(config.read(args.conf)) == 0:
-        print(f'Invalid "{args.conf}" configuration file', file = sys.stderr)
+        print(f'File "{args.conf}" not found or invalid', file = sys.stderr)
         sys.exit(-1)
 
     utils.check_config_values(config)
@@ -148,7 +148,8 @@ def manage_invitation_action(config: configparser.ConfigParser, logger: logging.
     # <-- generate random pairs from the user's list
 
     logger.debug('Generated the pairs: %s', pairs)
-    logger.info('The users %s have been excluded from this round!', ignored)
+    logger.info(f"The {utils.get_plural_or_singular(len(ignored), 'user', 'users')} {ignored} "
+                f"{utils.get_plural_or_singular(len(ignored), 'has', 'have')} been excluded from this round!")
 
     # Send the invitation message to all the pairs, applying a small
     # delay between each send to avoid encountering an API rate limit.
@@ -175,6 +176,8 @@ def manage_invitation_action(config: configparser.ConfigParser, logger: logging.
 
     with open(f"{config['GENERIC']['history_path']}{tail_file_name}", 'w', encoding = 'utf-8') as file:
         json.dump(pairs, file)
+
+    logger.info(f"Generated {len(pairs)} {utils.get_plural_or_singular(len(pairs), 'pair', 'pairs')}")
     # <-- serialization of the pair list into a file for the reminder action
 
 
@@ -203,6 +206,8 @@ def manage_reminder_action(config: configparser.ConfigParser, logger: logging.Lo
 
     with open(f"{config['GENERIC']['history_path']}{file_history}", 'r', encoding = 'utf-8') as file:
 
+        reminder_sent = 0
+
         # Send the reminder message to all the pairs, applying a small
         # delay between each send to avoid encountering an API rate limit.
         for pair in tqdm(json.load(file), desc = 'Send reminder messages'):
@@ -218,13 +223,17 @@ def manage_reminder_action(config: configparser.ConfigParser, logger: logging.Lo
 
             if not exist_recent_messages:
                 try:
-                    logger.info(f"Sending reminder to: {pair}")
+                    logger.debug(f"Sending reminder to: {pair}")
 
                     slack_connector.send_message_to_pairs(pair, _(":slightly_smiling_face: hi <!here>, have you "
                                                                   "had the chance to schedule a time for a :coffee: "
                                                                   "and a chat?"))
+
+                    reminder_sent += 1
                 except GroupwareCommunicationError as e:
                     logger.warning("Error sending message to the pair (%s), OpenCoffee will continue to the next send\
                                    operation: %s", pair, e)
 
                 time.sleep(0.25)
+
+        logger.info(f"Sent {reminder_sent} {utils.get_plural_or_singular(reminder_sent, 'reminder', 'reminders')}")

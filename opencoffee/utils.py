@@ -60,10 +60,10 @@ def get_history_filename(is_test_mode: bool, current_config_file: str, suffix: s
         subject to message sending.
 
         Parameters:
-            is_test_mode (bool): Indicates whether the current execution is in test mode.
-            current_config_file (str): Current configuration file.
-            suffix (str): Optional, specifies the suffix of the file, for example, using
-                          a timestamp.
+            - is_test_mode (bool): Indicates whether the current execution is in test mode.
+            - current_config_file (str): Current configuration file.
+            - suffix (str): Optional, specifies the suffix of the file, for example, using
+                a timestamp.
 
         Returns:
             str: Name of the file that can be used for storing data.
@@ -95,8 +95,8 @@ def get_most_recent_file_history(history_path: str, tail_file_name: str) -> str 
         recent file that matches the expected pattern is retrieved.
 
         Parameters:
-            history_path (str): The path to search for the file.
-            tail_file_name (str): The end-of-file pattern.
+            - history_path (str): The path to search for the file.
+            - tail_file_name (str): The end-of-file pattern.
 
         Return:
             str | None: The file name or None if no file is available.
@@ -112,3 +112,21 @@ def get_most_recent_file_history(history_path: str, tail_file_name: str) -> str 
             return filename
 
     return None
+
+
+def get_plural_or_singular(count: int, word_singular: str, world_plural: str):
+    """ Get the singular or plural form of a word based on the count.
+
+        Parameters:
+            - word_singular (str): The singular word to get the form of.
+            - world_plural (str): The plural word to get the form of.
+            - count (int): The count associated with the word.
+
+        Returns:
+            str: The singular or plural form of the word based on the count.
+    """
+
+    if count == 1:
+        return word_singular
+
+    return world_plural

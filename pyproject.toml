@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "opencoffee"
-version = "0.9.1"
+version = "0.9.2"
 description = "It takes all the members in a Slack channel and randomly pairs them up for a coffee date"
 authors = ["Yellow Sakura <dev@yellowsakura.com>"]
 readme = "README.md"

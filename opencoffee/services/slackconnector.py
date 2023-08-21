@@ -32,8 +32,8 @@ class SlackConnector(GenericServiceConnector):
                 https://api.slack.com/methods/conversations.members
 
             Parameters:
-                channel_id (str): The channel ID from witch to read users.
-                ignore_users (Iterable[str]): The users to ignore.
+                - channel_id (str): The channel ID from witch to read users.
+                - ignore_users (Iterable[str]): The users to ignore.
 
             Returns:
                 list[str]: The list of user IDs from a channel
@@ -71,9 +71,9 @@ class SlackConnector(GenericServiceConnector):
                 https://api.slack.com/methods/chat.postMessage
 
             Parameters:
-                pair (Tuple[str, ...]): Tuple containing the list of users
+                - pair (Tuple[str, ...]): Tuple containing the list of users
                     to whom to send the message.
-                message (str): Text message to send.
+                - message (str): Text message to send.
 
             Returns:
                 None
@@ -103,11 +103,11 @@ class SlackConnector(GenericServiceConnector):
                 https://api.slack.com/methods/conversations.info
 
             Parameters:
-                pair (Tuple[str, ...]): Tuple containing the list of users
+                - pair (Tuple[str, ...]): Tuple containing the list of users
                     for whom to search for recent messages.
-                backtrack_days (int): Number of days (not negative) to check
+                - backtrack_days (int): Number of days (not negative) to check
                     the presence of a chat among the various users.
-                limit (int): Optional, the number of messages to extract.
+                - limit (int): Optional, the number of messages to extract.
 
             Returns:
                 bool: True or False based on whether at least one message has
