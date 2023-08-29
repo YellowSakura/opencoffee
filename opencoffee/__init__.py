@@ -1,6 +1,7 @@
 import argparse
 import configparser
 import gettext
+import importlib.metadata
 import json
 import logging
 import random
@@ -30,6 +31,8 @@ def main():
         choices = ['invitation', 'reminder'],
         help = 'action to perform: execute a new "invitation" round or send a "reminder" for the previous one',
         required = True)
+
+    parser.add_argument('--version', action='version', version=importlib.metadata.version('opencoffee'))
 
     args = parser.parse_args()
     # <-- command line argument management
