@@ -12,8 +12,8 @@ from datetime import datetime
 from typing import Callable
 from tqdm import tqdm
 from opencoffee.errors import GroupwareCommunicationError
-from opencoffee.messaging_api_wrappers.generic_service_connector import GenericServiceConnector
-from opencoffee.messaging_api_wrappers.slack_connector import SlackConnector
+from opencoffee.messaging_api_wrappers.generic_messaging_api_wrapper import GenericMessagingApiWrapper
+from opencoffee.messaging_api_wrappers.slack_wrapper import SlackWrapper
 from opencoffee import utils
 
 
@@ -63,25 +63,26 @@ def main():
     if config.getboolean('GENERIC', 'test_mode'):
         logger.warning('Test mode: ON - NO MESSAGES WILL BE SENT')
 
-    slack_connector = SlackConnector(config['slack']['api_token'], config.getboolean('GENERIC', 'test_mode'))
+    slack_wrapper:GenericMessagingApiWrapper = SlackWrapper(config['slack']['api_token'],
+                                                            config.getboolean('GENERIC', 'test_mode'))
 
     if args.action == 'invitation':
-        manage_invitation_action(config, logger, slack_connector, _, args)
+        manage_invitation_action(config, logger, slack_wrapper, _, args)
     elif args.action == 'reminder':
-        manage_reminder_action(config, logger, slack_connector, _, args)
+        manage_reminder_action(config, logger, slack_wrapper, _, args)
 
     logger.info('OpenCoffee END')
 
 
 def manage_invitation_action(config: configparser.ConfigParser, logger: logging.Logger,
-                             slack_connector: GenericServiceConnector, _: Callable[..., str],
+                             slack_wrapper: GenericMessagingApiWrapper, _: Callable[..., str],
                              args: argparse.Namespace) -> None:
     """ Manage the invitation action.
         The function takes all the members in a channel and randomly pairs
         them up. """
 
     try:
-        users = slack_connector.get_users_from_channel(config['slack']['channel_id'], config['slack']['ignore_users'])
+        users = slack_wrapper.get_users_from_channel(config['slack']['channel_id'], config['slack']['ignore_users'])
     except GroupwareCommunicationError as e:
         logger.error("Error getting list of users: %s", e)
         sys.exit(-1)
@@ -103,7 +104,7 @@ def manage_invitation_action(config: configparser.ConfigParser, logger: logging.
         second = random.choice(users)
 
         try:
-            exist_recent_message = slack_connector.exist_recent_message_exchange_in_pairs((first, second),
+            exist_recent_message = slack_wrapper.exist_recent_message_exchange_in_pairs((first, second),
                     config.getint('slack', 'backtrack_days'))
             retry = 0
 
@@ -115,7 +116,7 @@ def manage_invitation_action(config: configparser.ConfigParser, logger: logging.
                 second = random.choice(users)
                 retry += 1
 
-                exist_recent_message = slack_connector.exist_recent_message_exchange_in_pairs((first, second),
+                exist_recent_message = slack_wrapper.exist_recent_message_exchange_in_pairs((first, second),
                         config.getint('slack', 'backtrack_days'))
 
                 # Delay applied to avoid encountering an API rate limit
@@ -158,7 +159,7 @@ def manage_invitation_action(config: configparser.ConfigParser, logger: logging.
     # delay between each send to avoid encountering an API rate limit.
     for pair in tqdm(pairs, desc = 'Send invitation messages'):
         try:
-            slack_connector.send_message_to_pairs(pair, _(":wave: hi <!here>, sometimes it can be difficult to "
+            slack_wrapper.send_message_to_pairs(pair, _(":wave: hi <!here>, sometimes it can be difficult to "
                             "know all your colleagues, so I take care of creating opportunities for a :coffee: "
                             "and a chat among all members in <#%s>.\n"
                             "What do you think about a time to get to know each other better?")
@@ -185,7 +186,7 @@ def manage_invitation_action(config: configparser.ConfigParser, logger: logging.
 
 
 def manage_reminder_action(config: configparser.ConfigParser, logger: logging.Logger,
-                           slack_connector: GenericServiceConnector, _: Callable[..., str],
+                           slack_wrapper: GenericMessagingApiWrapper, _: Callable[..., str],
                            args: argparse.Namespace) -> None:
     """ Manage the reminder action.
         Retrieve the file generated from the last run, containing the
@@ -221,14 +222,14 @@ def manage_reminder_action(config: configparser.ConfigParser, logger: logging.Lo
             #
             # ATTENTION: The value 5 is used to include the message sent by
             # OpenCoffee in the count.
-            exist_recent_messages = slack_connector.exist_recent_message_exchange_in_pairs(pair,
+            exist_recent_messages = slack_wrapper.exist_recent_message_exchange_in_pairs(pair,
                     config.getint('slack', 'backtrack_days'), 5)
 
             if not exist_recent_messages:
                 try:
                     logger.debug(f"Sending reminder to: {pair}")
 
-                    slack_connector.send_message_to_pairs(pair, _(":slightly_smiling_face: hi <!here>, have you "
+                    slack_wrapper.send_message_to_pairs(pair, _(":slightly_smiling_face: hi <!here>, have you "
                                                                   "had the chance to schedule a time for a :coffee: "
                                                                   "and a chat?"))
 

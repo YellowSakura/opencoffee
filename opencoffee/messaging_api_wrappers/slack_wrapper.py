@@ -6,22 +6,22 @@ import slack_sdk
 
 from slack_sdk.errors import SlackApiError
 from opencoffee.errors import GroupwareCommunicationError
-from opencoffee.messaging_api_wrappers.generic_service_connector import GenericServiceConnector
+from opencoffee.messaging_api_wrappers.generic_messaging_api_wrapper import GenericMessagingApiWrapper
 
 
-class SlackConnector(GenericServiceConnector):
+class SlackWrapper(GenericMessagingApiWrapper):
     """ The class handles all the logic towards the Slack APIs, using the official
         SDK which is thus abstracted from the caller. """
 
-    api_token: str
-    client: slack_sdk.WebClient
-    test_mode: bool
+    _api_token: str
+    _client: slack_sdk.WebClient
+    _test_mode: bool
 
 
-    def __init__(self, api_token, test_mode = False):
-        self.api_token = api_token
-        self.client = slack_sdk.WebClient(token = self.api_token)
-        self.test_mode = test_mode
+    def __init__(self, _api_token: str, _test_mode: bool = False):
+        self._api_token = _api_token
+        self._client = slack_sdk.WebClient(token = self._api_token)
+        self._test_mode = _test_mode
 
 
     def get_users_from_channel(self, channel_id: str, ignore_users: Iterable[str]) -> list[str]:
@@ -43,13 +43,13 @@ class SlackConnector(GenericServiceConnector):
         """
 
         try:
-            response = self.client.conversations_members(channel = channel_id)
+            response = self._client.conversations_members(channel = channel_id)
             chanel_users = response['members']
 
             # Manage paginated results (100 members at a time)
             # https://api.slack.com/methods/conversations.members#arg_limit
             while response['response_metadata']['next_cursor']:
-                response = self.client.conversations_members(channel = channel_id,
+                response = self._client.conversations_members(channel = channel_id,
                                                              cursor = response['response_metadata']['next_cursor'])
                 chanel_users.extend(response['members'])
 
@@ -83,10 +83,10 @@ class SlackConnector(GenericServiceConnector):
         """
 
         try:
-            channel_id = self.client.conversations_open(users = pair)['channel']['id']
+            channel_id = self._client.conversations_open(users = pair)['channel']['id']
 
-            if not self.test_mode:
-                self.client.chat_postMessage(channel = channel_id, text = message)
+            if not self._test_mode:
+                self._client.chat_postMessage(channel = channel_id, text = message)
         except SlackApiError as e:
             raise GroupwareCommunicationError(str(e), e.response) from e
 
@@ -119,10 +119,10 @@ class SlackConnector(GenericServiceConnector):
         """
 
         try:
-            channel_id = self.client.conversations_open(users = pair)['channel']['id']
+            channel_id = self._client.conversations_open(users = pair)['channel']['id']
             oldest_timestamp = (datetime.today() - timedelta(days = backtrack_days)).timestamp()
 
-            messages = self.client.conversations_history(channel = channel_id, oldest = str(oldest_timestamp),
+            messages = self._client.conversations_history(channel = channel_id, oldest = str(oldest_timestamp),
                                                          limit = limit)['messages']
         except SlackApiError as e:
             raise GroupwareCommunicationError(str(e), e.response) from e

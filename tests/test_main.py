@@ -5,7 +5,7 @@ import json
 import logging
 import os
 
-from helper_connector import HelperConnector
+from helper_messaging_api_wrapper import HelperMessagingApiWrapper
 
 import opencoffee
 
@@ -26,14 +26,14 @@ helper_config['slack'] = {
 
 # Other helper variables
 helper_logger = logging.getLogger(__name__)
-helper_connector = HelperConnector()
+helper_wrapper = HelperMessagingApiWrapper()
 _ = gettext.gettext
 helper_args = argparse.Namespace(conf = 'pytest.ini')
 
 
 def test_manage_invitation_action():
     """ Test function for the invitation action """
-    opencoffee.manage_invitation_action(helper_config, helper_logger, helper_connector, _, helper_args)
+    opencoffee.manage_invitation_action(helper_config, helper_logger, helper_wrapper, _, helper_args)
 
     tail_file_name = opencoffee.utils.get_history_filename(helper_config.getboolean('GENERIC', 'test_mode'),
                                                            helper_args.conf)
@@ -46,15 +46,15 @@ def test_manage_invitation_action():
     with open(f"{helper_config['GENERIC']['history_path']}{file_history}", 'r', encoding = 'utf-8') as file:
         data = json.load(file)
 
-        # The value 2 is related to the fact that the HelperConnector returns
-        # four users.
+        # The value 2 is related to the fact that the HelperMessagingApiWrapper
+        # returns exactly four users.
         assert len(data) == 2
 
 
 def test_manage_reminder_action():
     """ Test function for the reminder action """
 
-    opencoffee.manage_reminder_action(helper_config, helper_logger, helper_connector, _, helper_args)
+    opencoffee.manage_reminder_action(helper_config, helper_logger, helper_wrapper, _, helper_args)
 
     assert True
 

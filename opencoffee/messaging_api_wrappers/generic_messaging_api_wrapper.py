@@ -3,9 +3,9 @@ from typing import Iterable
 from typing import Tuple
 
 
-class GenericServiceConnector(ABC):
+class GenericMessagingApiWrapper(ABC):
     """ Generic class that defines the methods that must be implemented mandatorily
-        by the connectors with the real logic. """
+        by the wrapper with the real logic. """
 
     @abstractmethod
     def get_users_from_channel(self, channel_id: str, ignore_users: Iterable[str]) -> list[str]:

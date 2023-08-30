@@ -1,8 +1,8 @@
 from typing import Iterable
 from typing import Tuple
-from opencoffee.messaging_api_wrappers.generic_service_connector import GenericServiceConnector
+from opencoffee.messaging_api_wrappers.generic_messaging_api_wrapper import GenericMessagingApiWrapper
 
-class HelperConnector(GenericServiceConnector):
+class HelperMessagingApiWrapper(GenericMessagingApiWrapper):
     """ Helper function with dummy values to simulate the actual invocation of a
         communication service. """
 
