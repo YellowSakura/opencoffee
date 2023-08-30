@@ -6,7 +6,7 @@ import slack_sdk
 
 from slack_sdk.errors import SlackApiError
 from opencoffee.errors import GroupwareCommunicationError
-from opencoffee.services.genericserviceconnector import GenericServiceConnector
+from opencoffee.messaging_api_wrappers.generic_service_connector import GenericServiceConnector
 
 
 class SlackConnector(GenericServiceConnector):

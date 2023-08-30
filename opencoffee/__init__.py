@@ -12,8 +12,8 @@ from datetime import datetime
 from typing import Callable
 from tqdm import tqdm
 from opencoffee.errors import GroupwareCommunicationError
-from opencoffee.services.slackconnector import GenericServiceConnector
-from opencoffee.services.slackconnector import SlackConnector
+from opencoffee.messaging_api_wrappers.generic_service_connector import GenericServiceConnector
+from opencoffee.messaging_api_wrappers.slack_connector import SlackConnector
 from opencoffee import utils
 
 

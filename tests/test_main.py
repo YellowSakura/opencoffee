@@ -5,7 +5,7 @@ import json
 import logging
 import os
 
-from helperconnector import HelperConnector
+from helper_connector import HelperConnector
 
 import opencoffee
 
