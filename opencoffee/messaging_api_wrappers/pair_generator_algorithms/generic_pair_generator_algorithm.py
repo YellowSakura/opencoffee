@@ -13,18 +13,13 @@ class GenericPairGeneratorAlgorithm(ABC):
 
     _pairs: Iterable[str]
     _ignored: Iterable[str]
+    _logger: logging.Logger
 
 
-    def __init__(self):
+    def __init__(self, logger: logging.Logger):
         self._pairs = []
         self._ignored = []
-
-
-    @abstractmethod
-    def compute_pairs(self, logger: logging.Logger, messaging_api_wrapper: GenericMessagingApiWrapper) -> None:
-        """ TODO. """
-
-        return
+        self._logger = logger
 
 
     def get_pairs(self) -> Iterable[str]:
@@ -35,3 +30,10 @@ class GenericPairGeneratorAlgorithm(ABC):
     def get_ignored(self) -> Iterable[str]:
         """ TODO """
         return self._ignored
+
+
+    @abstractmethod
+    def compute_pairs_from_users(self, users: list[str], messaging_api_wrapper: GenericMessagingApiWrapper) -> None:
+        """ TODO. """
+
+        return
