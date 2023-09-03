@@ -85,7 +85,13 @@ For running a complete set of tests using [pytest](https://docs.pytest.org/en), 
 $ poetry run poe pytest
 ```
 
-Finally, to assess the overall quality of OpenCoffee, you can use the following command, which executes all the previous commands:
+For count the number of source code lines using [Pygount](https://github.com/roskakori/pygount), use the following command:
+
+```console
+$ poetry run poe pygount
+```
+
+Finally, to assess the overall quality of OpenCoffee, you can use the following command, which executes all the previous commands with the exception of Pygount:
 
 ```console
 $ poetry run poe quality
@@ -224,6 +230,7 @@ Dependencies:
  * [Argparse](https://docs.python.org/3/library/argparse.html) is licensed under [Python Software Foundation License (PSFL)](https://docs.python.org/3/license.htm) by Steven J. Bethard;
  * [Mypy](https://mypy-lang.org) is licensed under [MIT License](https://opensource.org/licenses/MIT);
  * [Poe the Poet](https://github.com/nat-n/poethepoet) is licensed under [MIT License](https://opensource.org/licenses/MIT);
+ * [Pygount](https://github.com/roskakori/pygount), is licensed under [BSD license](https://opensource.org/license/bsd-3-clause);
  * [Pylint](https://github.com/pylint-dev/pylint) is licensed under [GPLv2 license](https://github.com/pylint-dev/pylint/blob/main/LICENSE) and [other licenses](https://github.com/pylint-dev/pylint#license);
  * [pytest](https://docs.pytest.org/en) is licensed under [MIT License](https://opensource.org/licenses/MIT);
  * [Python](https://www.python.org) is licensed under [Python Software Foundation License (PSFL)](https://docs.python.org/3/license.html) by Python Software Foundation (PSF);

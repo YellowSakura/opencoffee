@@ -17,6 +17,7 @@ tqdm = "^4.65.0"
 [tool.poetry.dev-dependencies]
 mypy = "^1.4.1"
 poethepoet = "^0.21.1"
+pygount = "^1.6.1"
 pylint = "^2.17.4"
 pytest = "^7.4.0"
 types-tqdm = "^4.65.0.2"
@@ -27,6 +28,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poe.tasks]
 mypy = "poetry run mypy opencoffee/ tests/"
+pygount = "poetry run pygount --format=summary --suffix=py,md opencoffee/* tests/* README.md"
 pylint = "poetry run pylint opencoffee/* tests/*"
 pytest = "poetry run pytest"
 quality = ["mypy", "pylint", "pytest"]
