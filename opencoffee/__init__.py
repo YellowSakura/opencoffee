@@ -63,8 +63,7 @@ def main():
     if config.getboolean('GENERIC', 'test_mode'):
         logger.warning('Test mode: ON - NO MESSAGES WILL BE SENT')
 
-    slack_wrapper = SlackWrapper(config['slack']['api_token'],
-                                                            config.getboolean('GENERIC', 'test_mode'))
+    slack_wrapper = SlackWrapper(config['slack']['api_token'], config.getboolean('GENERIC', 'test_mode'))
 
     if args.action == 'invitation':
         manage_invitation_action(config, logger, slack_wrapper, _, args)
@@ -88,12 +87,12 @@ def manage_invitation_action(config: configparser.ConfigParser, logger: logging.
         sys.exit(-1)
 
     # Generate random pairs from the user's list -->
-    pair_generator_algorithm = SimpleGeneratorAlgorithm(config, logger)
+    pair_generator = SimpleGeneratorAlgorithm(config, logger)
 
-    pair_generator_algorithm.compute_pairs_from_users(users, slack_wrapper)
+    pair_generator.compute_pairs_from_users(users, slack_wrapper)
 
-    pairs = pair_generator_algorithm.get_pairs()
-    ignored = pair_generator_algorithm.get_ignored()
+    pairs = pair_generator.get_pairs()
+    ignored = pair_generator.get_ignored()
     # <-- generate random pairs from the user's list
 
     logger.debug('Generated the pairs: %s', pairs)
