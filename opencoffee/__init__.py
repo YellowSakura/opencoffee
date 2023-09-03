@@ -4,7 +4,6 @@ import gettext
 import importlib.metadata
 import json
 import logging
-import random
 import sys
 import time
 
