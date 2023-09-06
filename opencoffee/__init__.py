@@ -58,7 +58,7 @@ def main():
         _ = new_language.gettext
     # <-- apply translations
 
-    logger.info('OpenCoffee BEGIN')
+    logger.info('OpenCoffee BEGIN: ' + str(sys.argv[1:]))
 
     if config.getboolean('GENERIC', 'test_mode'):
         logger.warning('Test mode: ON - NO MESSAGES WILL BE SENT')
@@ -70,7 +70,7 @@ def main():
     elif args.action == 'reminder':
         manage_reminder_action(config, logger, slack_wrapper, _, args)
 
-    logger.info('OpenCoffee END')
+    logger.info('OpenCoffee END: ' + str(sys.argv[1:]))
 
 
 def manage_invitation_action(config: configparser.ConfigParser, logger: logging.Logger,
