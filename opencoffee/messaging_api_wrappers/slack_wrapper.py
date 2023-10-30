@@ -24,6 +24,37 @@ class SlackWrapper(GenericMessagingApiWrapper):
         self._test_mode = _test_mode
 
 
+    def get_public_channel_ids(self):
+        """ Retrieve the list id of all accessible public channels.
+
+            Official Slack documentation:
+                https://api.slack.com/methods/conversations.list
+
+            Returns:
+                list[str]: The list of public chanel IDs
+
+            Raises:
+                GroupwareCommunicationError: In case of Slack API error.
+        """
+
+        try:
+            response = self._client.conversations_list(types = 'public_channel', exclude_archived = True)
+            channels = response['channels']
+
+            # Manage paginated results (100 members at a time)
+            # https://api.slack.com/methods/conversations.list#arg_limit
+            while response['response_metadata']['next_cursor']:
+                response = self._client.conversations_list(types = 'public_channel', exclude_archived = True)
+                channels.extend(response['channels'])
+
+            channel_ids = [chanel['id'] for chanel in channels]
+
+        except SlackApiError as e:
+            raise GroupwareCommunicationError(str(e), e.response) from e
+
+        return channel_ids
+
+
     def get_users_from_channel(self, channel_id: str, ignore_users: Iterable[str]) -> list[str]:
         """ Reads all members inside the channel with the ID channel_id, excluding
             users defined in ignore_users.

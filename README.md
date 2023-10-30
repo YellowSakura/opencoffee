@@ -102,11 +102,13 @@ $ poetry run poe quality
 
 OpenCoffee aims to make use of a minimal set of Slack permissions for its operation, specifically:
 
+- [channels:read](https://api.slack.com/scopes/channels:read) (optional): This permission is optional and allows you to view basic information about public channels in a workspace.  
+It's required only in the case of using the max-distance algorithm.
 - [chat:write](https://api.slack.com/scopes/chat:write) (mandatory): This permission is required to send messages in a group with people created by the bot;
-- [groups:read](https://api.slack.com/scopes/groups:read) (mandatory): This permission is necessary to retrieve basic information about members in a conversation where the bot is present, and it is used to access all members in the initial channel;
-- [mpim:history](https://api.slack.com/scopes/mpim:history) (mandatory): This permission is used to view messages and other content in group direct messages to which the bot has been added.  
+- [groups:read](https://api.slack.com/scopes/groups:read) (mandatory): This permission is necessary to retrieve basic information about private channels that the bot has been added to, and it is used to access all members in the initial channel;
+- [mpim:history](https://api.slack.com/scopes/mpim:history) (mandatory): This permission is used to view messages and other content in group direct messages that the bot has been added to.  
 It is required to empirically check if users in a group created by the bot arrange a coffee date;
-- [mpim:write](https://api.slack.com/scopes/mpim:write) (mandatory): This permission allows the bot to initiate group direct messages with people.  
+- [mpim:write](https://api.slack.com/scopes/mpim:write) (mandatory): This permission allows the bot to start group direct messages with people.  
 It is used in conjunction with ```chat:write``` to create a "dialog bridge" between people.
 
 ## Step by step configuration
@@ -117,7 +119,7 @@ In this section, we will go through step-by-step instructions on how to set up t
 
 The prerequisite is having a pre-configured Slack account with administrator access credentials available.
 
-1. Log in to your Slack administrator account and navigate to the following page: https://api.slack.com/apps
+1. Log in to your Slack administrator account and navigate to the following page: ```https://api.slack.com/apps```
 2. Click on "Create an App":
 
 <p align="center" width="100%"><img alt="Step 2" src="docs/slack-setup-guide/step-02.webp"></p>
@@ -146,6 +148,7 @@ features:
 oauth_config:
   scopes:
     bot:
+      - channels:read
       - chat:write
       - groups:read
       - mpim:history

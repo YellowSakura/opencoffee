@@ -7,6 +7,12 @@ class GenericMessagingApiWrapper(ABC):
     """ Generic class that defines the methods that must be implemented mandatorily
         by the wrapper with the real logic. """
 
+
+    @abstractmethod
+    def get_public_channel_ids(self) -> list[str]:
+        """ Retrieve the list id of all accessible public channels. """
+
+
     @abstractmethod
     def get_users_from_channel(self, channel_id: str, ignore_users: Iterable[str]) -> list[str]:
         """ Reads all members inside the channel with the ID channel_id, excluding
