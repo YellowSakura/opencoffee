@@ -184,4 +184,4 @@ def manage_reminder_action(config: configparser.ConfigParser, logger: logging.Lo
 
                 time.sleep(0.25)
 
-        logger.info(f"Sent {reminder_sent} {utils.get_plural_or_singular(reminder_sent, 'reminder', 'reminders')}")
+        logger.info(f"Sent {reminder_sent} {utils.get_plural_or_singular(reminder_sent, 'reminder', 'reminders')}, {(reminder_sent/len(pair)) * 100}% of total")
