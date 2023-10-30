@@ -8,7 +8,7 @@
 <img align="left" width="140px" src="docs/coffee-cup.png">
 
 A simple, open-source, localizable, extensible, and [privacy-respecting](#permissions-details) solution (self-hostable with minimal permissions) designed to facilitate connections among colleagues through Slack.  
-It takes all the members in a Slack channel and randomly pairs them up for a coffee date.
+It takes all the members in a Slack channel and pairs them up for a coffee date.
 
 This solution promotes knowledge sharing, improves communication, and facilitates periodic random introductions, one coffee :coffee: at a time.
 
@@ -138,8 +138,8 @@ The prerequisite is having a pre-configured Slack account with administrator acc
 # Schema details can be found at: https://api.slack.com/reference/manifests#metadata
 display_information:
   name: OpenCoffee
-  long_description: "A simple, open-source, localizable, extensible, and privacy-respecting solution (self-hostable with minimal permissions) designed to facilitate connections among colleagues through Slack.\nIt takes all the members in a channel and randomly pairs them up for a coffee date.\n\nThis solution promotes knowledge sharing, improves communication, and facilitates periodic random introductions, one coffee at a time.\n\nhttps://github.com/YellowSakura/opencoffee"
-  description: It takes all the members in a channel and randomly pairs them up for a coffee date
+  long_description: "A simple, open-source, localizable, extensible, and privacy-respecting solution (self-hostable with minimal permissions) designed to facilitate connections among colleagues through Slack.\nIt takes all the members in a channel and pairs them up for a coffee date.\n\nThis solution promotes knowledge sharing, improves communication, and facilitates periodic random introductions, one coffee at a time.\n\nhttps://github.com/YellowSakura/opencoffee"
+  description: It takes all the members in a channel and pairs them up for a coffee date
   background_color: "#86523e"
 features:
   bot_user:

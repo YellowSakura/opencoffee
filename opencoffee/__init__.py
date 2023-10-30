@@ -13,6 +13,7 @@ from tqdm import tqdm
 from opencoffee.errors import GroupwareCommunicationError
 from opencoffee.messaging_api_wrappers.generic_messaging_api_wrapper import GenericMessagingApiWrapper
 from opencoffee.messaging_api_wrappers.slack_wrapper import SlackWrapper
+from opencoffee.pair_generator_algorithms.generic_pair_generator_algorithm import GenericPairGeneratorAlgorithm
 from opencoffee.pair_generator_algorithms.simple_generator_algorithm import SimpleGeneratorAlgorithm
 from opencoffee.pair_generator_algorithms.max_distance_algorithm_generator_algorithm import MaxDistanceGeneratorAlgorithm
 from opencoffee import utils
@@ -89,7 +90,7 @@ def manage_invitation_action(config: configparser.ConfigParser, logger: logging.
 
     # Generate random pairs from the user's list -->
     generator_algorithm_type = config.get('slack', 'generator_algorithm_type', fallback = 'simple')
-    pair_generator = None
+    pair_generator:GenericPairGeneratorAlgorithm
 
     if generator_algorithm_type == 'simple':
         pair_generator = SimpleGeneratorAlgorithm(config, logger)
