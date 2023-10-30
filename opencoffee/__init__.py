@@ -87,7 +87,14 @@ def manage_invitation_action(config: configparser.ConfigParser, logger: logging.
         sys.exit(-1)
 
     # Generate random pairs from the user's list -->
-    pair_generator = SimpleGeneratorAlgorithm(config, logger)
+    generator_algorithm_type = config.get('slack', 'generator_algorithm_type', fallback = 'simple-algorithm')
+    pair_generator = None
+
+    if(generator_algorithm_type == 'simple-algorithm'):
+        pair_generator = SimpleGeneratorAlgorithm(config, logger)
+    else:
+        print(f"Invalid {generator_algorithm_type} generator algorithm type")
+        sys.exit(-1)
 
     pair_generator.compute_pairs_from_users(users, slack_wrapper)
 

@@ -7,7 +7,7 @@
 
 <img align="left" width="140px" src="docs/coffee-cup.png">
 
-A simple, open-source, localizable, extensible, and privacy-respecting solution (self-hostable with minimal permissions) designed to facilitate connections among colleagues through Slack.  
+A simple, open-source, localizable, extensible, and [privacy-respecting](#permissions-details) solution (self-hostable with minimal permissions) designed to facilitate connections among colleagues through Slack.  
 It takes all the members in a Slack channel and randomly pairs them up for a coffee date.
 
 This solution promotes knowledge sharing, improves communication, and facilitates periodic random introductions, one coffee :coffee: at a time.
@@ -17,11 +17,12 @@ While there are various open-source scripts that accomplish similar tasks, the p
 ## Contents
 
 1. [Getting started](#getting-started)
-2. [Step by step configuration](#step-by-step-configuration)
+2. [Permissions details](#permissions-details)
+3. [Step by step configuration](#step-by-step-configuration)
     - [Slack account](#slack-account)
     - [OpenCoffee configuration](#opencoffee-configuration)
-3. [Translation](#translation)
-4. [Licences](#licences)
+4. [Translation](#translation)
+5. [Licences](#licences)
 
 ## Getting started
 
@@ -96,6 +97,17 @@ Finally, to assess the overall quality of OpenCoffee, you can use the following 
 ```console
 $ poetry run poe quality
 ```
+
+## Permissions details
+
+OpenCoffee aims to make use of a minimal set of Slack permissions for its operation, specifically:
+
+- [chat:write](https://api.slack.com/scopes/chat:write) (mandatory): This permission is required to send messages in a group with people created by the bot;
+- [groups:read](https://api.slack.com/scopes/groups:read) (mandatory): This permission is necessary to retrieve basic information about members in a conversation where the bot is present, and it is used to access all members in the initial channel;
+- [mpim:history](https://api.slack.com/scopes/mpim:history) (mandatory): This permission is used to view messages and other content in group direct messages to which the bot has been added.  
+It is required to empirically check if users in a group created by the bot arrange a coffee date;
+- [mpim:write](https://api.slack.com/scopes/mpim:write) (mandatory): This permission allows the bot to initiate group direct messages with people.  
+It is used in conjunction with ```chat:write``` to create a "dialog bridge" between people.
 
 ## Step by step configuration
 
