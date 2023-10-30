@@ -58,7 +58,7 @@ def main():
         _ = new_language.gettext
     # <-- apply translations
 
-    logger.info('OpenCoffee BEGIN: ' + str(sys.argv[1:]))
+    logger.info("OpenCoffee BEGIN: %s", str(sys.argv[1:]))
 
     if config.getboolean('GENERIC', 'test_mode'):
         logger.warning('Test mode: ON - NO MESSAGES WILL BE SENT')
@@ -70,7 +70,7 @@ def main():
     elif args.action == 'reminder':
         manage_reminder_action(config, logger, slack_wrapper, _, args)
 
-    logger.info('OpenCoffee END: ' + str(sys.argv[1:]))
+    logger.info("OpenCoffee END: %s", str(sys.argv[1:]))
 
 
 def manage_invitation_action(config: configparser.ConfigParser, logger: logging.Logger,
@@ -90,7 +90,7 @@ def manage_invitation_action(config: configparser.ConfigParser, logger: logging.
     generator_algorithm_type = config.get('slack', 'generator_algorithm_type', fallback = 'simple-algorithm')
     pair_generator = None
 
-    if(generator_algorithm_type == 'simple-algorithm'):
+    if generator_algorithm_type == 'simple-algorithm':
         pair_generator = SimpleGeneratorAlgorithm(config, logger)
     else:
         print(f"Invalid {generator_algorithm_type} generator algorithm type")
@@ -162,10 +162,11 @@ def manage_reminder_action(config: configparser.ConfigParser, logger: logging.Lo
     with open(f"{config['GENERIC']['history_path']}{file_history}", 'r', encoding = 'utf-8') as file:
 
         reminder_sent = 0
+        pairs = json.load(file)
 
         # Send the reminder message to all the pairs, applying a small
         # delay between each send to avoid encountering an API rate limit.
-        for pair in tqdm(json.load(file), desc = 'Send reminder messages'):
+        for pair in tqdm(pairs, desc = 'Send reminder messages'):
 
             # An heuristic is applied to determine whether to send a reminder
             # message or not, by checking if users have exchanged at least 4
@@ -191,4 +192,5 @@ def manage_reminder_action(config: configparser.ConfigParser, logger: logging.Lo
 
                 time.sleep(0.25)
 
-        logger.info(f"Sent {reminder_sent} {utils.get_plural_or_singular(reminder_sent, 'reminder', 'reminders')}, {(reminder_sent/len(pair)) * 100}% of total")
+        logger.info(f"Sent {reminder_sent} {utils.get_plural_or_singular(reminder_sent, 'reminder', 'reminders')}, "
+                    f"{(reminder_sent/len(pairs)) * 100}% of total")
