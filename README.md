@@ -102,14 +102,14 @@ $ poetry run poe quality
 
 OpenCoffee aims to make use of a minimal set of Slack permissions for its operation, specifically:
 
-- [channels:read](https://api.slack.com/scopes/channels:read) (optional): This permission is optional and allows you to view basic information about public channels in a workspace.  
-It's required only in the case of using the max-distance algorithm.
+- [channels:read](https://api.slack.com/scopes/channels:read) (optional): This permission is not mandatory, but it enables to view basic information about public channels in a workspace.  
+  It is only required when using the ```'max-distance'``` algorithm, for more details, please refer to the 'OpenCoffee configuration' section.
 - [chat:write](https://api.slack.com/scopes/chat:write) (mandatory): This permission is required to send messages in a group with people created by the bot;
 - [groups:read](https://api.slack.com/scopes/groups:read) (mandatory): This permission is necessary to retrieve basic information about private channels that the bot has been added to, and it is used to access all members in the initial channel;
 - [mpim:history](https://api.slack.com/scopes/mpim:history) (mandatory): This permission is used to view messages and other content in group direct messages that the bot has been added to.  
-It is required to empirically check if users in a group created by the bot arrange a coffee date;
+  It is required to empirically check if users in a group created by the bot arrange a coffee date;
 - [mpim:write](https://api.slack.com/scopes/mpim:write) (mandatory): This permission allows the bot to start group direct messages with people.  
-It is used in conjunction with ```chat:write``` to create a "dialog bridge" between people.
+  It is used in conjunction with ```'chat:write'``` to create a "dialog bridge" between people.
 
 ## Step by step configuration
 
@@ -207,7 +207,12 @@ The various entries that constitute it are documented in the sample file, the mo
 * ```api_token```: Required for communicating with the Slack APIs, this value is obtained in step 9 of the Slack account setup process;
 * ```channel_id```: Required to identify the channel containing users involved in the OpenCoffee logic, this value is obtained in step 16 of the Slack account setup process;
 * ```ignore_users```: A list of users belonging to the ```channel_id``` to be ignored.  
-  You must at least include the OpenCoffee users as explained in step 13 of the Slack account setup process.
+  You must at least include the OpenCoffee users as explained in step 13 of the Slack account setup process;
+* ```generator_algorithm_type```: Determine the type of algorithm used to generate coffee break pairings.  
+  Possible values are: ```simple``` or ```max-distance```.  
+  The ```'simple'``` is the fastest algorithm and generates random combinations, while the ```'max-distance'``` is slower, but aims to create pairings of individuals who, through heuristics, tend to work less closely together.  
+  Default value is ```simple```.  
+  ATTENTION: The use of ```'max-distance'``` requires the ```'channels:read'``` permission in the Slack app configuration.
 
 Of course, you can have different configuration files that involve different channels, languages, and any other combination of configurations.
 
@@ -249,7 +254,8 @@ Dependencies:
  * [Pylint](https://github.com/pylint-dev/pylint) is licensed under [GPLv2 license](https://github.com/pylint-dev/pylint/blob/main/LICENSE) and [other licenses](https://github.com/pylint-dev/pylint#license);
  * [pytest](https://docs.pytest.org/en) is licensed under [MIT License](https://opensource.org/licenses/MIT);
  * [Python](https://www.python.org) is licensed under [Python Software Foundation License (PSFL)](https://docs.python.org/3/license.html) by Python Software Foundation (PSF);
- * [Python Slack SDK](https://slack.dev/python-slack-sdk/) is licensed under [MIT License](https://opensource.org/licenses/MIT) by Slack Technologies, LLC;
+ * [Python Slack SDK](https://slack.dev/python-slack-sdk) is licensed under [MIT License](https://opensource.org/licenses/MIT) by Slack Technologies, LLC;
+ * [SciPy](https://scipy.org) id distributed under a liberal [BSD license](https://github.com/scipy/scipy/blob/main/LICENSE.txt);
  * [tqdm](https://github.com/tqdm/tqdm) is licensed under [MIT License](https://opensource.org/licenses/MIT) and [other licenses](https://github.com/tqdm/tqdm/blob/master/LICENCE).
 
 Images:
