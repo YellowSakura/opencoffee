@@ -103,7 +103,7 @@ $ poetry run poe quality
 OpenCoffee aims to make use of a minimal set of Slack permissions for its operation, specifically:
 
 - [channels:read](https://api.slack.com/scopes/channels:read) (optional): This permission is not mandatory, but it enables to view basic information about public channels in a workspace.  
-  It is only required when using the ```'max-distance'``` algorithm, for more details, please refer to the 'OpenCoffee configuration' section.
+  It is only required when using the ```'max-distance'``` algorithm, for more details, please refer to the [OpenCoffee configuration](#opencoffee-configuration) section.
 - [chat:write](https://api.slack.com/scopes/chat:write) (mandatory): This permission is required to send messages in a group with people created by the bot;
 - [groups:read](https://api.slack.com/scopes/groups:read) (mandatory): This permission is necessary to retrieve basic information about private channels that the bot has been added to, and it is used to access all members in the initial channel;
 - [mpim:history](https://api.slack.com/scopes/mpim:history) (mandatory): This permission is used to view messages and other content in group direct messages that the bot has been added to.  
