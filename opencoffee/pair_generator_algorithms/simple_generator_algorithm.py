@@ -46,7 +46,7 @@ class SimpleGeneratorAlgorithm(GenericPairGeneratorAlgorithm):
                             self._config.getint('slack', 'backtrack_days'))
 
                     # Delay applied to avoid encountering an API rate limit
-                    time.sleep(0.5)
+                    time.sleep(.5)
 
                 if exist_recent_message:
                     self._logger.debug("\tNo valid pairs found for %s!", first)

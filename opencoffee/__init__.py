@@ -123,7 +123,7 @@ def manage_invitation_action(config: configparser.ConfigParser, logger: logging.
             logger.warning("Error sending message to the pair (%s), OpenCoffee will continue to the next send\
                            operation: %s", pair, e)
 
-        time.sleep(0.25)
+        time.sleep(.25)
 
     # Serialization of the pair list into a file for the reminder action.
     #
@@ -194,7 +194,7 @@ def manage_reminder_action(config: configparser.ConfigParser, logger: logging.Lo
                     logger.warning("Error sending message to the pair (%s), OpenCoffee will continue to the next send\
                                    operation: %s", pair, e)
 
-                time.sleep(0.25)
+                time.sleep(.25)
 
         logger.info(f"Sent {reminder_sent} {utils.get_plural_or_singular(reminder_sent, 'reminder', 'reminders')}, "
                     f"{(reminder_sent/len(pairs)) * 100}% of total")
