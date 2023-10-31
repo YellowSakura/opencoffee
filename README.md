@@ -103,13 +103,13 @@ $ poetry run poe quality
 OpenCoffee aims to make use of a minimal set of Slack permissions for its operation, specifically:
 
 - [channels:read](https://api.slack.com/scopes/channels:read) (optional): This permission is not mandatory, but it enables to view basic information about public channels in a workspace.  
-  It is only required when using the ```'max-distance'``` algorithm, for more details, please refer to the [OpenCoffee configuration](#opencoffee-configuration) section.
+  It is only required when using the ```max-distance``` algorithm, for more details, please refer to the [OpenCoffee configuration](#opencoffee-configuration) section;
 - [chat:write](https://api.slack.com/scopes/chat:write) (mandatory): This permission is required to send messages in a group with people created by the bot;
 - [groups:read](https://api.slack.com/scopes/groups:read) (mandatory): This permission is necessary to retrieve basic information about private channels that the bot has been added to, and it is used to access all members in the initial channel;
 - [mpim:history](https://api.slack.com/scopes/mpim:history) (mandatory): This permission is used to view messages and other content in group direct messages that the bot has been added to.  
   It is required to empirically check if users in a group created by the bot arrange a coffee date;
 - [mpim:write](https://api.slack.com/scopes/mpim:write) (mandatory): This permission allows the bot to start group direct messages with people.  
-  It is used in conjunction with ```'chat:write'``` to create a "dialog bridge" between people.
+  It is used in conjunction with ```chat:write``` to create a "dialog bridge" between people.
 
 ## Step by step configuration
 
@@ -210,9 +210,9 @@ The various entries that constitute it are documented in the sample file, the mo
   You must at least include the OpenCoffee users as explained in step 13 of the Slack account setup process;
 * ```generator_algorithm_type```: Determine the type of algorithm used to generate coffee break pairings.  
   Possible values are: ```simple``` or ```max-distance```.  
-  The ```'simple'``` is the fastest algorithm and generates random combinations, while the ```'max-distance'``` is slower, but aims to create pairings of individuals who, through heuristics, tend to work less closely together.  
+  The ```simple``` is the fastest algorithm and generates random combinations, while the ```max-distance``` is slower, but aims to create pairings of individuals who, through heuristics, tend to work less closely together.  
   Default value is ```simple```.  
-  ATTENTION: The use of ```'max-distance'``` requires the ```'channels:read'``` permission in the Slack app configuration.
+  ATTENTION: The use of ```max-distance``` requires the ```channels:read``` permission in the Slack app configuration.
 
 Of course, you can have different configuration files that involve different channels, languages, and any other combination of configurations.
 
