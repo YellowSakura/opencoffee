@@ -49,8 +49,10 @@ class MaxDistanceGeneratorAlgorithm(GenericPairGeneratorAlgorithm):
 
 
 
-        print(f"Users:\n{users}\n")
-        print(f"Distance matrix:\n{u_distance_matrix.toarray()}")
+
+
+        self._logger.debug("Users:\n%s", users)
+        self._logger.debug("Distance matrix:\n%s", u_distance_matrix.toarray())
 
 
     def _get_sparse_matrix_index(self, users: list[str], user1: str, user2: str) -> Tuple[int, int]:
