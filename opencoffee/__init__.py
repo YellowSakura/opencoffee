@@ -65,25 +65,25 @@ def main():
     if config.getboolean('GENERIC', 'test_mode'):
         logger.warning('Test mode: ON - NO MESSAGES WILL BE SENT')
 
-    slack_wrapper = SlackWrapper(config['slack']['api_token'], config.getboolean('GENERIC', 'test_mode'))
+    messaging_api_wrapper = SlackWrapper(config['slack']['api_token'], config.getboolean('GENERIC', 'test_mode'))
 
     if args.action == 'invitation':
-        manage_invitation_action(config, logger, slack_wrapper, _, args)
+        manage_invitation_action(config, logger, messaging_api_wrapper, _, args)
     elif args.action == 'reminder':
-        manage_reminder_action(config, logger, slack_wrapper, _, args)
+        manage_reminder_action(config, logger, messaging_api_wrapper, _, args)
 
     logger.info("OpenCoffee END: %s", str(sys.argv[1:]))
 
 
 def manage_invitation_action(config: configparser.ConfigParser, logger: logging.Logger,
-                             slack_wrapper: GenericMessagingApiWrapper, _: Callable[..., str],
+                             messaging_api_wrapper: GenericMessagingApiWrapper, _: Callable[..., str],
                              args: argparse.Namespace) -> None:
     """ Manage the invitation action.
         The function takes all the members in a channel and randomly pairs
         them up. """
 
     try:
-        users = slack_wrapper.get_users_from_channel(config['slack']['channel_id'], config['slack']['ignore_users'])
+        users = messaging_api_wrapper.get_users_from_channel(config['slack']['channel_id'], config['slack']['ignore_users'])
     except GroupwareCommunicationError as e:
         logger.critical("Error getting list of users: %s", e)
         sys.exit(-1)
