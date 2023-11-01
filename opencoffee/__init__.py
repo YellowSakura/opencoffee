@@ -100,7 +100,7 @@ def manage_invitation_action(config: configparser.ConfigParser, logger: logging.
         print(f"Invalid {generator_algorithm_type} generator algorithm type")
         sys.exit(-1)
 
-    pair_generator.compute_pairs_from_users(users, slack_wrapper)
+    pair_generator.compute_pairs_from_users(users, messaging_api_wrapper)
 
     pairs = pair_generator.get_pairs()
     ignored = pair_generator.get_ignored()
@@ -114,7 +114,7 @@ def manage_invitation_action(config: configparser.ConfigParser, logger: logging.
     # delay between each send to avoid encountering an API rate limit.
     for pair in tqdm(pairs, desc = 'Send invitation messages'):
         try:
-            slack_wrapper.send_message_to_pairs(pair, _(":wave: hi <!here>, sometimes it can be difficult to "
+            messaging_api_wrapper.send_message_to_pairs(pair, _(":wave: hi <!here>, sometimes it can be difficult to "
                             "know all your colleagues, so I take care of creating opportunities for a :coffee: "
                             "and a chat among all members in <#%s>.\n"
                             "What do you think about a time to get to know each other better?")
@@ -141,7 +141,7 @@ def manage_invitation_action(config: configparser.ConfigParser, logger: logging.
 
 
 def manage_reminder_action(config: configparser.ConfigParser, logger: logging.Logger,
-                           slack_wrapper: GenericMessagingApiWrapper, _: Callable[..., str],
+                           messaging_api_wrapper: GenericMessagingApiWrapper, _: Callable[..., str],
                            args: argparse.Namespace) -> None:
     """ Manage the reminder action.
         Retrieve the file generated from the last run, containing the
@@ -178,14 +178,14 @@ def manage_reminder_action(config: configparser.ConfigParser, logger: logging.Lo
             #
             # ATTENTION: The value 5 is used to include the message sent by
             # OpenCoffee in the count.
-            exist_recent_messages = slack_wrapper.exist_recent_message_exchange_in_pairs(pair,
+            exist_recent_messages = messaging_api_wrapper.exist_recent_message_exchange_in_pairs(pair,
                     config.getint('slack', 'backtrack_days'), 5)
 
             if not exist_recent_messages:
                 try:
                     logger.debug(f"Sending reminder to: {pair}")
 
-                    slack_wrapper.send_message_to_pairs(pair, _(":slightly_smiling_face: hi <!here>, have you "
+                    messaging_api_wrapper.send_message_to_pairs(pair, _(":slightly_smiling_face: hi <!here>, have you "
                                                                   "had the chance to schedule a time for a :coffee: "
                                                                   "and a chat?"))
 

@@ -21,14 +21,8 @@ class MaxDistanceGeneratorAlgorithm(GenericPairGeneratorAlgorithm):
         # distance matrix among different users.
         users.sort()
 
-        # Retrieve the list of all accessible public channels
-        channel_ids = messaging_api_wrapper.get_public_channel_ids()
-
-        # Build a sparse matrix to compute user distances.
-        # Since the distance between A and B is the same as between B and A, we
-        # have a symmetric matrix, so we can store it efficiently.
-        # Distance is never negative, so we use unsigned integers.
-        u_distance_matrix = self._build_distance_matrix(messaging_api_wrapper, users, channel_ids)
+        # Build the distance matrix
+        u_distance_matrix = self._build_distance_matrix(messaging_api_wrapper, users)
 
         # Generate a copy of the user list that we use to generate pairs.
         #
@@ -62,26 +56,38 @@ class MaxDistanceGeneratorAlgorithm(GenericPairGeneratorAlgorithm):
                 indexes = self._get_sparse_matrix_index(users, current_user, test_user)
                 distance = u_distance_matrix[indexes]
 
+                # TODO, aggiungere popolamento distance_dict e rimuovere print a seguire
+
+
+
                 print(f"{current_user} è distante {distance} da {test_user}")
+
+            print(f"{current_user} ha una riga nella matrice delle distanza di: {distance_dict}")
 
         pbar.close()
         # <-- generate pairs from the working user's list
 
 
-    def _build_distance_matrix(self, messaging_api_wrapper: GenericMessagingApiWrapper, users: list[str],
-                               channel_ids: list[str]) -> lil_matrix:
+    def _build_distance_matrix(self, messaging_api_wrapper: GenericMessagingApiWrapper, users: list[str]) -> lil_matrix:
         """ The function effectively creates the distance matrix between all users
-            in the users list and the list of input channels.
+            in the users list.
 
             Parameters:
-                - users (list[str]): The list of users on which to calculate the various distances.
-                - channel_id (str): The list of chat channel IDs to check for the presence of users.
+                - users (list[str]): The list of users on which to calculate the
+                                     various distances
 
             Returns:
-                lil_matrix: A sparse matrix with the details of the distances
+                lil_matrix: A sparse matrix with the details of the distances.
         """
 
+        # Since the distance between A and B is the same as between B and A, we
+        # have a symmetric matrix, so we can store it efficiently with a sparse
+        # matrix, using in addition unsigned integers because distance is never
+        # negative.
         u_distance_matrix = lil_matrix((len(users), len(users)), dtype = 'uint16')
+
+        # Retrieve the list of all accessible public channels
+        channel_ids = messaging_api_wrapper.get_public_channel_ids()
 
         # The distance matrix is constructed by iterating through all public
         # channels and checking for the presence of all possible combinations
