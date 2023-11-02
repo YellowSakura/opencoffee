@@ -1,10 +1,12 @@
 import random
+import sys
 import time
 
 from itertools import combinations
 from typing import Dict, List, Tuple
 from scipy.sparse import lil_matrix
 from tqdm import tqdm
+from opencoffee.errors import GroupwareCommunicationError
 from opencoffee.messaging_api_wrappers.generic_messaging_api_wrapper import GenericMessagingApiWrapper
 from opencoffee.pair_generator_algorithms.generic_pair_generator_algorithm import GenericPairGeneratorAlgorithm
 
@@ -22,7 +24,12 @@ class MaxDistanceGeneratorAlgorithm(GenericPairGeneratorAlgorithm):
         users.sort()
 
         # Build the distance matrix
-        u_distance_matrix = self._build_distance_matrix(messaging_api_wrapper, users)
+        try:
+            u_distance_matrix = self._build_distance_matrix(messaging_api_wrapper, users)
+        except GroupwareCommunicationError as e:
+            self._logger.critical("Error while constructing the distance matrix, there is an issue with listing groups "
+                                  "or their members within the group: %s", e)
+            sys.exit(-1)
 
         # Generate a copy of the user list that we use to generate pairs.
         #
@@ -38,31 +45,25 @@ class MaxDistanceGeneratorAlgorithm(GenericPairGeneratorAlgorithm):
         pbar = tqdm(total = len(working_users), desc = 'Generate pairs')
         while len(working_users) > 1:
             current_user = working_users.pop(0)
+            u_distance_dict = self._build_user_distance_dict(users, working_users, current_user, u_distance_matrix)
 
-            # The distance_dict dictionary will contain, in an ordered manner,
-            # distances as keys and as values, a list of users' IDs associated
-            # with the same distance.
-            # This will be the reference data structure used to find the best
-            # match for the current user.
-            distance_dict: Dict[int, List[str]] = {}
+            try:
+                retry = 0
 
-            for test_user in users:
-                # Ignoring users who have already been processed, so who are
-                # not in the working_users list, and avoiding distance checks
-                # between a user and themselves.
-                if test_user not in working_users or test_user == current_user:
-                    continue
+                for value in u_distance_dict.items():
 
-                indexes = self._get_sparse_matrix_index(users, current_user, test_user)
-                distance = u_distance_matrix[indexes]
+                    # Retrieve and remove a random value from the list, trying to get
+                    # combinations of users who haven't had a recent three-way
+                    # conversation with the OpenCoffee bot.
+                    target_user = random.choice(value)
 
-                # TODO, aggiungere popolamento distance_dict e rimuovere print a seguire
+                    # TODO AGGIUNGERE LOGICHE
 
+            except GroupwareCommunicationError as e:
+                self._logger.critical("Error getting recent message for the pair (%s, %s): %s", current_user, target_user, e)
+                sys.exit(-1)
 
-
-                print(f"{current_user} è distante {distance} da {test_user}")
-
-            print(f"{current_user} ha una riga nella matrice delle distanza di: {distance_dict}")
+            self._logger.debug("%s has a row in the distance matrix of: %s", current_user, u_distance_dict)
 
         pbar.close()
         # <-- generate pairs from the working user's list
@@ -114,6 +115,54 @@ class MaxDistanceGeneratorAlgorithm(GenericPairGeneratorAlgorithm):
         self._logger.debug("Built distance matrix\n%s", u_distance_matrix.toarray())
 
         return u_distance_matrix
+
+
+    def _build_user_distance_dict(self, users: list[str], working_users: list[str], current_user: str,
+                                  u_distance_matrix: lil_matrix) -> Dict[int, List[str]]:
+        """ The method will build a custom-generated dictionary, in an ordered
+            manner, with all distances from the current_user.
+            The keys will represent the distance values, and the values will
+            be lists of users' IDs associated with the same distance.
+            This will be the reference data structure used to find the best
+            match for the current_user.
+
+            Parameters:
+                - users (list[str]): The list of users on which to calculate the
+                                     various distances.
+                - working_users (list[str]): The list of users already worked.
+                - current_user (str): The user for whom we are building the
+                                      dictionary.
+                - u_distance_matrix (lil_matrix): The sparse matrix with the
+                                                  details of the distances.
+
+            Returns:
+                Dict[int, List[str]]: The dictionary for the current_user.
+        """
+
+        distance_dict: Dict[int, List[str]] = {}
+
+        for test_user in users:
+            # Ignoring users who have already been processed, so who are
+            # not in the working_users list, and avoiding distance checks
+            # between a user and themselves.
+            if test_user not in working_users or test_user == current_user:
+                continue
+
+            indexes = self._get_sparse_matrix_index(users, current_user, test_user)
+            distance = u_distance_matrix[indexes]
+
+            # Dictionary initialization for the current_user -->
+            if distance not in distance_dict:
+                distance_dict[distance] = []
+
+            distance_dict[distance].append(test_user)
+
+        # Sort the dictionary by distances (keys)
+        sorted_keys = sorted(distance_dict.keys())
+        distance_dict = {key: distance_dict[key] for key in sorted_keys}
+        # <-- dictionary initialization for the current_user
+
+        return distance_dict
 
 
     def _get_sparse_matrix_index(self, users: list[str], user1: str, user2: str) -> Tuple[int, int]:
