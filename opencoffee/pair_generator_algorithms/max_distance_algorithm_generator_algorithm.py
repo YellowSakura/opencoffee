@@ -3,7 +3,7 @@ import sys
 import time
 
 from itertools import combinations
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 from scipy.sparse import lil_matrix
 from tqdm import tqdm
 from opencoffee.errors import GroupwareCommunicationError
@@ -48,19 +48,27 @@ class MaxDistanceGeneratorAlgorithm(GenericPairGeneratorAlgorithm):
             u_distance_dict = self._build_user_distance_dict(users, working_users, current_user, u_distance_matrix)
 
             try:
-                retry = 0
+                # TODO
+                target_user = self._search_pair_for_user(current_user, u_distance_dict, messaging_api_wrapper)
 
-                for value in u_distance_dict.items():
+                if target_user is None:
+                    self._logger.debug("\tNo valid pairs found for %s!", current_user)
 
-                    # Retrieve and remove a random value from the list, trying to get
-                    # combinations of users who haven't had a recent three-way
-                    # conversation with the OpenCoffee bot.
-                    target_user = random.choice(value)
+                    self._ignored.append(current_user)
 
-                    # TODO AGGIUNGERE LOGICHE
+                    # Progress bar updated only for the current_user, ignored in this
+                    # round.
+                    pbar.update(1)
+                else:
+                    working_users.remove(target_user)
+                    self._pairs.append((current_user, target_user))
+
+                    # Progress bar updated for the current_user and target_user, used as
+                    # pair for this round.
+                    pbar.update(2)
 
             except GroupwareCommunicationError as e:
-                self._logger.critical("Error getting recent message for the pair (%s, %s): %s", current_user, target_user, e)
+                self._logger.critical("Error searching pair for the user %s: %s", current_user, e)
                 sys.exit(-1)
 
             self._logger.debug("%s has a row in the distance matrix of: %s", current_user, u_distance_dict)
@@ -163,6 +171,48 @@ class MaxDistanceGeneratorAlgorithm(GenericPairGeneratorAlgorithm):
         # <-- dictionary initialization for the current_user
 
         return distance_dict
+
+
+    def _search_pair_for_user(self, current_user: str, u_distance_dict: Dict[int, List[str]],
+                              messaging_api_wrapper: GenericMessagingApiWrapper) -> Optional[str]:
+        """ TODO """
+
+        retry = 0
+        max_retry = self._config.getint('slack', 'backtrack_max_attempts')
+
+        for dict_elem in u_distance_dict.items():
+
+            users_same_distance = dict_elem[1]
+
+            # Retrieve and remove a random value from the list, trying to get
+            # combinations of users who haven't had a recent three-way
+            # conversation with the OpenCoffee bot.
+            target_user = random.choice(users_same_distance)
+            users_same_distance.remove(target_user)
+
+            exist_recent_message = messaging_api_wrapper.exist_recent_message_exchange_in_pairs(
+                    (current_user, target_user), self._config.getint('slack', 'backtrack_days'))
+
+            while exist_recent_message is True and retry < max_retry and len(users_same_distance) != 0:
+                self._logger.debug("\tFound recent chat for (%s, %s), try different pairs!", current_user, target_user)
+
+                target_user = random.choice(users_same_distance)
+                users_same_distance.remove(target_user)
+                retry += 1
+
+                # Delay applied to avoid encountering an API rate limit
+                time.sleep(.5)
+
+                exist_recent_message = messaging_api_wrapper.exist_recent_message_exchange_in_pairs(
+                        (current_user, target_user), self._config.getint('slack', 'backtrack_days'))
+
+            if not exist_recent_message:
+                return target_user
+
+            if retry >= max_retry:
+                return None
+
+        return None
 
 
     def _get_sparse_matrix_index(self, users: list[str], user1: str, user2: str) -> Tuple[int, int]:

@@ -24,9 +24,9 @@ class SimpleGeneratorAlgorithm(GenericPairGeneratorAlgorithm):
         while len(users) > 1:
             current_user = users.pop(0)
 
-            # Retrieve and remove a random value from the list, trying to get
-            # combinations of users who haven't had a recent three-way
-            # conversation with the OpenCoffee bot.
+            # Retrieve a random value from the list, trying to get combinations
+            # of users who haven't had a recent three-way conversation with the
+            # OpenCoffee bot.
             target_user = random.choice(users)
 
             try:
@@ -42,11 +42,11 @@ class SimpleGeneratorAlgorithm(GenericPairGeneratorAlgorithm):
                     target_user = random.choice(users)
                     retry += 1
 
-                    exist_recent_message = messaging_api_wrapper.exist_recent_message_exchange_in_pairs(
-                            (current_user, target_user), self._config.getint('slack', 'backtrack_days'))
-
                     # Delay applied to avoid encountering an API rate limit
                     time.sleep(.5)
+
+                    exist_recent_message = messaging_api_wrapper.exist_recent_message_exchange_in_pairs(
+                            (current_user, target_user), self._config.getint('slack', 'backtrack_days'))
 
                 if exist_recent_message:
                     self._logger.debug("\tNo valid pairs found for %s!", current_user)
