@@ -101,6 +101,9 @@ class MaxDistanceGeneratorAlgorithm(GenericPairGeneratorAlgorithm):
         # channels and checking for the presence of all possible combinations
         # of users for which pairs need to be created.
         for channel_id in tqdm(channel_ids, desc = 'Check channels'):
+            # Delay applied to avoid encountering an API rate limit
+            time.sleep(.5)
+
             channel_users = messaging_api_wrapper.get_users_from_channel(channel_id, [])
             channel_users.sort()
 
@@ -113,10 +116,7 @@ class MaxDistanceGeneratorAlgorithm(GenericPairGeneratorAlgorithm):
                 if user1 in channel_users and user2 in channel_users:
                     indexes = self._get_sparse_matrix_index(users, user1, user2)
                     u_distance_matrix[indexes] += 1
-
-            # Delay applied to avoid encountering an API rate limit
-            time.sleep(.5)
-        # <-- build a sparse matrix to compute users distance
+        # <-- distance matrix construction
 
         self._logger.debug("Users:\n%s", users)
         self._logger.debug("Built distance matrix\n%s", u_distance_matrix.toarray())
