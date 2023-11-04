@@ -193,10 +193,9 @@ class MaxDistanceGeneratorAlgorithm(GenericPairGeneratorAlgorithm):
         """
 
         retry = 0
-        max_retry = self._config.getint('slack', 'backtrack_max_attempts')
+        max_retries = self._config.getint('slack', 'backtrack_max_attempts')
 
         for dict_elem in u_distance_dict.items():
-
             users_same_distance = dict_elem[1]
 
             # Retrieve and remove a random value from the list, trying to get
@@ -211,7 +210,7 @@ class MaxDistanceGeneratorAlgorithm(GenericPairGeneratorAlgorithm):
             # If a recently existing chat is detected, an attempt is made
             # to generate a new combination, up to a maximum defined in the
             # configuration.
-            while exist_recent_message is True and retry < max_retry and len(users_same_distance) != 0:
+            while exist_recent_message is True and retry < max_retries and len(users_same_distance) != 0:
                 self._logger.debug("\tFound recent chat for (%s, %s), try different pairs!", current_user, candidate_user)
 
                 candidate_user = random.choice(users_same_distance)
@@ -227,7 +226,7 @@ class MaxDistanceGeneratorAlgorithm(GenericPairGeneratorAlgorithm):
             if not exist_recent_message:
                 return candidate_user
 
-            if retry >= max_retry:
+            if retry >= max_retries:
                 return None
 
         return None
