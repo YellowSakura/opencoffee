@@ -27,44 +27,47 @@ class SimpleGeneratorAlgorithm(GenericPairGeneratorAlgorithm):
             # Retrieve a random value from the list, trying to get combinations
             # of users who haven't had a recent three-way conversation with the
             # OpenCoffee bot.
-            target_user = random.choice(users)
+            candidate_user = random.choice(users)
 
             try:
                 exist_recent_message = messaging_api_wrapper.exist_recent_message_exchange_in_pairs(
-                        (current_user, target_user), self._config.getint('slack', 'backtrack_days'))
+                        (current_user, candidate_user), self._config.getint('slack', 'backtrack_days'))
                 retry = 0
 
-                # If a recent pre-existing chat is detected, an attempt is made
-                # to generate a new combination, up to a maximum of three attempts.
+                # If a recently existing chat is detected, an attempt is made
+                # to generate a new combination, up to a maximum defined in the
+                # configuration.
                 while exist_recent_message is True and retry < self._config.getint('slack', 'backtrack_max_attempts'):
-                    self._logger.debug("\tFound recent chat for (%s, %s), try different pairs!", current_user, target_user)
+                    self._logger.debug("\tFound recent chat for (%s, %s), try different pairs!", current_user,
+                                       candidate_user)
 
-                    target_user = random.choice(users)
+                    candidate_user = random.choice(users)
                     retry += 1
 
                     # Delay applied to avoid encountering an API rate limit
                     time.sleep(.5)
 
                     exist_recent_message = messaging_api_wrapper.exist_recent_message_exchange_in_pairs(
-                            (current_user, target_user), self._config.getint('slack', 'backtrack_days'))
+                            (current_user, candidate_user), self._config.getint('slack', 'backtrack_days'))
 
                 if exist_recent_message:
                     self._logger.debug("\tNo valid pairs found for %s!", current_user)
 
                     self._ignored.append(current_user)
 
-                    # Progress bar updated only for the current_user, ignored in this
+                    # Progress bar updated only for the current user, ignored in this
                     # round.
                     pbar.update(1)
                 else:
-                    users.remove(target_user)
-                    self._pairs.append((current_user, target_user))
+                    users.remove(candidate_user)
+                    self._pairs.append((current_user, candidate_user))
 
-                    # Progress bar updated for the current_user and target_user, used as
+                    # Progress bar updated for the current user and the candidate user, used as
                     # pair for this round.
                     pbar.update(2)
             except GroupwareCommunicationError as e:
-                self._logger.critical("Error getting recent message for the pair (%s, %s): %s", current_user, target_user, e)
+                self._logger.critical("Error getting recent message for the pair (%s, %s): %s", current_user,
+                                      candidate_user, e)
                 sys.exit(-1)
 
         # The progress bar is updated with the last user if it does not have an

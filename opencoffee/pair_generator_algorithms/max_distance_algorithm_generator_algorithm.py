@@ -48,22 +48,21 @@ class MaxDistanceGeneratorAlgorithm(GenericPairGeneratorAlgorithm):
             u_distance_dict = self._build_user_distance_dict(users, working_users, current_user, u_distance_matrix)
 
             try:
-                # TODO
-                target_user = self._search_pair_for_user(current_user, u_distance_dict, messaging_api_wrapper)
+                candidate_user = self._search_pair_for_user(current_user, u_distance_dict, messaging_api_wrapper)
 
-                if target_user is None:
+                if candidate_user is None:
                     self._logger.debug("\tNo valid pairs found for %s!", current_user)
 
                     self._ignored.append(current_user)
 
-                    # Progress bar updated only for the current_user, ignored in this
+                    # Progress bar updated only for the current user, ignored in this
                     # round.
                     pbar.update(1)
                 else:
-                    working_users.remove(target_user)
-                    self._pairs.append((current_user, target_user))
+                    working_users.remove(candidate_user)
+                    self._pairs.append((current_user, candidate_user))
 
-                    # Progress bar updated for the current_user and target_user, used as
+                    # Progress bar updated for the current user and the candidate user, used as
                     # pair for this round.
                     pbar.update(2)
 
@@ -83,7 +82,7 @@ class MaxDistanceGeneratorAlgorithm(GenericPairGeneratorAlgorithm):
 
             Parameters:
                 - users (list[str]): The list of users on which to calculate the
-                                     various distances
+                    various distances
 
             Returns:
                 lil_matrix: A sparse matrix with the details of the distances.
@@ -127,24 +126,24 @@ class MaxDistanceGeneratorAlgorithm(GenericPairGeneratorAlgorithm):
 
     def _build_user_distance_dict(self, users: list[str], working_users: list[str], current_user: str,
                                   u_distance_matrix: lil_matrix) -> Dict[int, List[str]]:
-        """ The method will build a custom-generated dictionary, in an ordered
-            manner, with all distances from the current_user.
-            The keys will represent the distance values, and the values will
-            be lists of users' IDs associated with the same distance.
-            This will be the reference data structure used to find the best
-            match for the current_user.
+        """ The method builds a custom-generated dictionary in an ordered manner,
+            which contains all distances from the current user.
+            The keys represent the distance values, and the values consist of
+            lists of user IDs associated with the same distance.
+            This output will serve as the reference data structure used to find
+            the best match for the current user
 
             Parameters:
                 - users (list[str]): The list of users on which to calculate the
-                                     various distances.
+                    various distances.
                 - working_users (list[str]): The list of users already worked.
                 - current_user (str): The user for whom we are building the
-                                      dictionary.
+                    dictionary.
                 - u_distance_matrix (lil_matrix): The sparse matrix with the
-                                                  details of the distances.
+                    details of the distances.
 
             Returns:
-                Dict[int, List[str]]: The dictionary for the current_user.
+                Dict[int, List[str]]: The dictionary for the current user.
         """
 
         distance_dict: Dict[int, List[str]] = {}
@@ -159,7 +158,7 @@ class MaxDistanceGeneratorAlgorithm(GenericPairGeneratorAlgorithm):
             indexes = self._get_sparse_matrix_index(users, current_user, test_user)
             distance = u_distance_matrix[indexes]
 
-            # Dictionary initialization for the current_user -->
+            # Dictionary initialization for the current user -->
             if distance not in distance_dict:
                 distance_dict[distance] = []
 
@@ -175,7 +174,23 @@ class MaxDistanceGeneratorAlgorithm(GenericPairGeneratorAlgorithm):
 
     def _search_pair_for_user(self, current_user: str, u_distance_dict: Dict[int, List[str]],
                               messaging_api_wrapper: GenericMessagingApiWrapper) -> Optional[str]:
-        """ TODO """
+        """ The method searches for the best match for the current user, utilizing
+            the dictionary containing all distances.
+            The best match not only takes into account the distance between the
+            current user and the candidate user but also checks if a similar
+            combination has already been generated before.
+
+            Parameters:
+                - current_user (str): The user for whom we are searching for a match.
+                - u_distance_dict Dict[int, List[str]]: The distance dictionary for
+                    the current user.
+                - messaging_api_wrapper (GenericMessagingApiWrapper): The wrapper
+                    for accessing the API.
+
+            Returns:
+                Optional[str]: A string with the user ID, or None if no match is
+                    found.
+        """
 
         retry = 0
         max_retry = self._config.getint('slack', 'backtrack_max_attempts')
@@ -187,27 +202,30 @@ class MaxDistanceGeneratorAlgorithm(GenericPairGeneratorAlgorithm):
             # Retrieve and remove a random value from the list, trying to get
             # combinations of users who haven't had a recent three-way
             # conversation with the OpenCoffee bot.
-            target_user = random.choice(users_same_distance)
-            users_same_distance.remove(target_user)
+            candidate_user = random.choice(users_same_distance)
+            users_same_distance.remove(candidate_user)
 
             exist_recent_message = messaging_api_wrapper.exist_recent_message_exchange_in_pairs(
-                    (current_user, target_user), self._config.getint('slack', 'backtrack_days'))
+                    (current_user, candidate_user), self._config.getint('slack', 'backtrack_days'))
 
+            # If a recently existing chat is detected, an attempt is made
+            # to generate a new combination, up to a maximum defined in the
+            # configuration.
             while exist_recent_message is True and retry < max_retry and len(users_same_distance) != 0:
-                self._logger.debug("\tFound recent chat for (%s, %s), try different pairs!", current_user, target_user)
+                self._logger.debug("\tFound recent chat for (%s, %s), try different pairs!", current_user, candidate_user)
 
-                target_user = random.choice(users_same_distance)
-                users_same_distance.remove(target_user)
+                candidate_user = random.choice(users_same_distance)
+                users_same_distance.remove(candidate_user)
                 retry += 1
 
                 # Delay applied to avoid encountering an API rate limit
                 time.sleep(.5)
 
                 exist_recent_message = messaging_api_wrapper.exist_recent_message_exchange_in_pairs(
-                        (current_user, target_user), self._config.getint('slack', 'backtrack_days'))
+                        (current_user, candidate_user), self._config.getint('slack', 'backtrack_days'))
 
             if not exist_recent_message:
-                return target_user
+                return candidate_user
 
             if retry >= max_retry:
                 return None

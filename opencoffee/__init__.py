@@ -89,7 +89,7 @@ def manage_invitation_action(config: configparser.ConfigParser, logger: logging.
         sys.exit(-1)
 
     # Generate random pairs from the user's list -->
-    generator_algorithm_type = config.get('slack', 'generator_algorithm_type', fallback = 'simple')
+    generator_algorithm_type = config.get('GENERIC', 'generator_algorithm_type', fallback = 'simple')
     pair_generator:GenericPairGeneratorAlgorithm
 
     if generator_algorithm_type == 'simple':
