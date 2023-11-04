@@ -158,7 +158,7 @@ class MaxDistanceGeneratorAlgorithm(GenericPairGeneratorAlgorithm):
             indexes = self._get_sparse_matrix_index(users, current_user, test_user)
             distance = u_distance_matrix[indexes]
 
-            # Dictionary initialization for the current user -->
+            # First initialization for a specific distance
             if distance not in distance_dict:
                 distance_dict[distance] = []
 
@@ -167,7 +167,6 @@ class MaxDistanceGeneratorAlgorithm(GenericPairGeneratorAlgorithm):
         # Sort the dictionary by distances (keys)
         sorted_keys = sorted(distance_dict.keys())
         distance_dict = {key: distance_dict[key] for key in sorted_keys}
-        # <-- dictionary initialization for the current_user
 
         return distance_dict
 
