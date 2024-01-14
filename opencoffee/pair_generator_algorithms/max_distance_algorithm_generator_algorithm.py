@@ -19,8 +19,7 @@ class MaxDistanceGeneratorAlgorithm(GenericPairGeneratorAlgorithm):
         of simultaneous presences). """
 
     def compute_pairs_from_users(self, users: list[str], messaging_api_wrapper: GenericMessagingApiWrapper) -> None:
-        # Sorting is crucial to ensure the accurate computation of the
-        # distance matrix among different users.
+        # The list of users is conveniently sorted before processing it
         users.sort()
 
         # Build the distance matrix
@@ -112,8 +111,9 @@ class MaxDistanceGeneratorAlgorithm(GenericPairGeneratorAlgorithm):
             # The sparse matrix is populated by adding an integer 1 value for
             # each (previously sorted) pair of users.
             #
-            # ATTENTION: Sorting users optimizes the structure of the matrix,
-            # as only the elements above the main diagonal will be populated.
+            # ATTENTION: Through the _get_sparse_matrix_index method, the
+            # indices of the matrix manage the users by ordering them, so that
+            # only the elements above the main diagonal are populated.
             for user1, user2 in combinations(users, 2):
                 if user1 in channel_users and user2 in channel_users:
                     indexes = self._get_sparse_matrix_index(users, user1, user2)
@@ -244,16 +244,20 @@ class MaxDistanceGeneratorAlgorithm(GenericPairGeneratorAlgorithm):
 
 
     def _get_sparse_matrix_index(self, users: list[str], user1: str, user2: str) -> Tuple[int, int]:
-        """ The method ensures generating an appropriate tuple of integers, containing
-            the indices usable to access the sparse distance matrix (symmetric matrix).
-            The users' positions (previously sorted) in conjunction with the logic of
-            generating the sparse matrix require that the matrix access coordinates
-            take into account only the elements above the main diagonal.
+        """ The method ensures the generation of an appropriate tuple of integers,
+            containing the indices used to access the sparse distance matrix (a
+            symmetric matrix).
 
-            Example: Suppose we have users A and Z, with indices 0 and 26.
-            The sparse matrix to access the distance between these two users should
-            always be 0 and 26 (row 0 and column 26) and never 26 and 0 (row 26 and
-            column 0). """
+            This method guarantees that only the elements above the main diagonal
+            are populated.
+
+            Consider the following example:
+            Suppose we have users A and Z, with indices 0 and 26, respectively.
+            The sparse matrix used to access the distance between these two users
+            should always be indexed at 0 and 26 (row 0 and column 26), and never
+            at 26 and 0 (row 26 and column 0).
+            This approach ensures that all useful data is located above the main
+            diagonal. """
 
         # Ensure that the coordinates take into account the lexicographic
         # order of user IDs.

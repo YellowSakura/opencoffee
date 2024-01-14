@@ -11,7 +11,7 @@ class HelperMessagingApiWrapper(GenericMessagingApiWrapper):
         return ['C00000001', 'C00000002', 'C00000003']
 
     def get_users_from_channel(self, channel_id: str, ignore_users: Iterable[str]) -> list[str]:
-        return ['U0000000001', 'U0000000002', 'U0000000003', 'U0000000004', 'U0000000005']
+        return ['U0000000002', 'U0000000003', 'U0000000004', 'U0000000005', 'U0000000001']
 
     def send_message_to_pairs(self, pair: Tuple[str, ...], message: str) -> None:
         return
