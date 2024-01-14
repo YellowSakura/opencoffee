@@ -25,7 +25,7 @@ class MaxDistanceGeneratorAlgorithm(GenericPairGeneratorAlgorithm):
 
         # Build the distance matrix
         try:
-            u_distance_matrix = self._build_distance_matrix(messaging_api_wrapper, users)
+            u_distance_matrix = self._build_distance_matrix(users, messaging_api_wrapper)
         except GroupwareCommunicationError as e:
             self._logger.critical("Error while constructing the distance matrix, there is an issue with listing groups "
                                   "or their members within the group: %s", e)
@@ -76,13 +76,15 @@ class MaxDistanceGeneratorAlgorithm(GenericPairGeneratorAlgorithm):
         # <-- generate pairs from the working user's list
 
 
-    def _build_distance_matrix(self, messaging_api_wrapper: GenericMessagingApiWrapper, users: list[str]) -> lil_matrix:
+    def _build_distance_matrix(self, users: list[str], messaging_api_wrapper: GenericMessagingApiWrapper) -> lil_matrix:
         """ The function effectively creates the distance matrix between all users
             in the users list.
 
             Parameters:
                 - users (list[str]): The list of users on which to calculate the
-                    various distances
+                    various distances.
+                - messaging_api_wrapper (GenericMessagingApiWrapper): The wrapper
+                    for accessing the API.
 
             Returns:
                 lil_matrix: A sparse matrix with the details of the distances.
@@ -99,7 +101,7 @@ class MaxDistanceGeneratorAlgorithm(GenericPairGeneratorAlgorithm):
 
         # The distance matrix is constructed by iterating through all public
         # channels and checking for the presence of all possible combinations
-        # of users for which pairs need to be created.
+        # of users, for which pairs need to be created.
         for channel_id in tqdm(channel_ids, desc = 'Check channels'):
             # Delay applied to avoid encountering an API rate limit
             time.sleep(.5)
@@ -107,8 +109,8 @@ class MaxDistanceGeneratorAlgorithm(GenericPairGeneratorAlgorithm):
             channel_users = messaging_api_wrapper.get_users_from_channel(channel_id, [])
             channel_users.sort()
 
-            # The sparse matrix is populated by adding an integer unit value
-            # for each (previously sorted) pair of users.
+            # The sparse matrix is populated by adding an integer 1 value for
+            # each (previously sorted) pair of users.
             #
             # ATTENTION: Sorting users optimizes the structure of the matrix,
             # as only the elements above the main diagonal will be populated.
@@ -143,7 +145,14 @@ class MaxDistanceGeneratorAlgorithm(GenericPairGeneratorAlgorithm):
                     details of the distances.
 
             Returns:
-                Dict[int, List[str]]: The dictionary for the current user.
+                Dict[int, List[str]]: The dictionary for the current user, for
+                example:
+
+                Distances                 Users
+                   [1] -----------------> [user1, user2, user 3]
+                   [3] -----------------> [user9, user12]
+                   [4] -----------------> [user6, user7, user8]
+                   ...
         """
 
         distance_dict: Dict[int, List[str]] = {}
@@ -176,7 +185,7 @@ class MaxDistanceGeneratorAlgorithm(GenericPairGeneratorAlgorithm):
         """ The method searches for the best match for the current user, utilizing
             the dictionary containing all distances.
             The best match not only takes into account the distance between the
-            current user and the candidate user but also checks if a similar
+            current user and the candidate user, but also checks if a similar
             combination has already been generated before.
 
             Parameters:
@@ -194,6 +203,9 @@ class MaxDistanceGeneratorAlgorithm(GenericPairGeneratorAlgorithm):
         retry = 0
         max_retries = self._config.getint('slack', 'backtrack_max_attempts')
 
+        # The dictionary is iterated over the keys, in ascending order of distance,
+        # retrieving in users_same_distance the section with the list of users
+        # who are the target of the best combination search.
         for dict_elem in u_distance_dict.items():
             users_same_distance = dict_elem[1]
 

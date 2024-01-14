@@ -90,7 +90,7 @@ def manage_invitation_action(config: configparser.ConfigParser, logger: logging.
 
     # Generate random pairs from the user's list -->
     generator_algorithm_type = config.get('GENERIC', 'generator_algorithm_type', fallback = 'simple')
-    pair_generator:GenericPairGeneratorAlgorithm
+    pair_generator:GenericPairGeneratorAlgorithm | None = None
 
     if generator_algorithm_type == 'simple':
         pair_generator = SimpleGeneratorAlgorithm(config, logger)
