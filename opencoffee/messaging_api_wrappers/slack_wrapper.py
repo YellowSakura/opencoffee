@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from typing import Iterable
 from typing import Tuple
 
+import time
 import slack_sdk
 
 from slack_sdk.errors import SlackApiError
@@ -44,8 +45,11 @@ class SlackWrapper(GenericMessagingApiWrapper):
             # Manage paginated results (100 members at a time)
             # https://api.slack.com/methods/conversations.list#arg_limit
             while response['response_metadata']['next_cursor']:
-                response = self._client.conversations_list(types = 'public_channel', exclude_archived = True)
-                channels.extend(response['channels'])
+                # Delay applied to avoid encountering an API rate limit
+                time.sleep(.5)
+
+                response = self._client.conversations_list(types = 'public_channel', exclude_archived = True,
+                                                           cursor = response['response_metadata']['next_cursor'])
 
             channel_ids = [chanel['id'] for chanel in channels]
 
@@ -80,6 +84,9 @@ class SlackWrapper(GenericMessagingApiWrapper):
             # Manage paginated results (100 members at a time)
             # https://api.slack.com/methods/conversations.members#arg_limit
             while response['response_metadata']['next_cursor']:
+                # Delay applied to avoid encountering an API rate limit
+                time.sleep(.5)
+
                 response = self._client.conversations_members(channel = channel_id,
                                                              cursor = response['response_metadata']['next_cursor'])
                 chanel_users.extend(response['members'])

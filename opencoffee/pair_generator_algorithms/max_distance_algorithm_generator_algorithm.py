@@ -29,6 +29,10 @@ class MaxDistanceGeneratorAlgorithm(GenericPairGeneratorAlgorithm):
             self._logger.critical("Error while constructing the distance matrix, there is an issue with listing groups "
                                   "or their members within the group: %s", e)
             sys.exit(-1)
+        except Exception as e: # pylint: disable=broad-exception-caught
+            self._logger.critical("Generic error, maybe rate limit exceeded: %s", e)
+
+            sys.exit(-1)
 
         # Generate a copy of the user list that we use to generate pairs.
         #
