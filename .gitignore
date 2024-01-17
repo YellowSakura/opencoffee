@@ -9,7 +9,7 @@ Thumbs.db
 # Logs
 logs/*.log*
 logs/history/*.json
-tests/logs/*
+tests/logs/*.log*
 
 # Default configuration file
 config.ini
