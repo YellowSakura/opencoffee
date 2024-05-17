@@ -5,7 +5,7 @@
 [![Poetry](https://img.shields.io/endpoint?url=https://python-poetry.org/badge/v0.json)](https://python-poetry.org/)
 [![Linting: pylint](https://img.shields.io/badge/Linting-pylint-yellowgreen)](https://github.com/pylint-dev/pylint)
 
-<img align="left" width="140px" src="docs/coffee-cup.png">
+<img align="left" width="100px" src="docs/coffee-cup.png">
 
 A simple, open-source, localizable, extensible, and [privacy-respecting](#permissions-details) solution (self-hostable with minimal permissions) designed to facilitate connections among colleagues through Slack.  
 It takes all the members in a Slack channel and pairs them up for a coffee date.
