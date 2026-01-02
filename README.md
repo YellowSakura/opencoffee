@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue)](https://opensource.org/licenses/MIT)
 [![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)](https://www.python.org)
-[![uv](https://img.shields.io/badge/uv-blue.svg)](https://github.com/astral-sh/uv) 
+[![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
 [![Linting: pylint](https://img.shields.io/badge/Linting-pylint-yellowgreen)](https://github.com/pylint-dev/pylint)
 
 <img align="left" width="100px" src="docs/coffee-cup.png">
@@ -94,18 +94,18 @@ $ uv run poe quality
 
 OpenCoffee aims to make use of a minimal set of Slack permissions for its operation, specifically:
 
-- [channels:read](https://api.slack.com/scopes/channels:read) (optional): This permission is not mandatory, but it enables to view basic information about public channels in a workspace.  
-  It is only required when using the ```max-distance``` algorithm, for more details, please refer to the [OpenCoffee configuration](#opencoffee-configuration) section;
-- [chat:write](https://api.slack.com/scopes/chat:write) (mandatory): This permission is required to send messages in a group with people created by the bot;
-- [groups:read](https://api.slack.com/scopes/groups:read) (mandatory): This permission is necessary to retrieve basic information about private channels that the bot has been added to, and it is used to access all members in the initial channel;
+- [channels:read](https://api.slack.com/scopes/channels:read) (optional): This permission is not mandatory, but it enables viewing basic information about public channels in a workspace.  
+  It is only required when using the ```max-distance``` algorithm; for more details, please refer to the [OpenCoffee configuration](#opencoffee-configuration) section.
+- [chat:write](https://api.slack.com/scopes/chat:write) (mandatory): This permission is required to send messages in a group with people created by the bot.
+- [groups:read](https://api.slack.com/scopes/groups:read) (mandatory): This permission is necessary to retrieve basic information about private channels that the bot has been added to, and it is used to access all members in the initial channel.
 - [mpim:history](https://api.slack.com/scopes/mpim:history) (mandatory): This permission is used to view messages and other content in group direct messages that the bot has been added to.  
-  It is required to empirically check if users in a group created by the bot arrange a coffee date;
+  It is required to empirically check if users in a group created by the bot arrange a coffee date.
 - [mpim:write](https://api.slack.com/scopes/mpim:write) (mandatory): This permission allows the bot to start group direct messages with people.  
   It is used in conjunction with ```chat:write``` to create a "dialog bridge" between people.
 
 ## Step by step configuration
 
-In this section, we will go through step-by-step instructions on how to set up the integration on Slack and and the necessary details to configure OpenCoffee.
+In this section, we will go through step-by-step instructions on how to set up the integration on Slack and the necessary details to configure OpenCoffee.
 
 ### Slack account
 
@@ -150,7 +150,7 @@ oauth_config:
 
 <p align="center" width="100%"><img alt="Step 6" src="docs/slack-setup-guide/step-06.webp"></p>
 
-7. [**Optional**] Edit the "Display Information," such as changing the description or the. icon using the `docs/coffee-cup.png` file, and then click "Save":
+7. [**Optional**] Edit the "Display Information," such as changing the description or the icon using the `docs/coffee-cup.png` file, and then click "Save":
 
 <p align="center" width="100%"><img alt="Step 7" src="docs/slack-setup-guide/step-07.webp"></p>
 
@@ -162,19 +162,19 @@ oauth_config:
 </p>
 
 9. Go to the "OAuth & Permissions" menu and copy the "Bot User OAuth Token" from the "OAuth Tokens for Your Workspace" section.  
-This token will be the value you'll use in the OpenCoffee configuration file, value ```api_token```:
+This token will be used for the `api_token` value in your OpenCoffee configuration file:
 
 <p align="center" width="100%"><img alt="Step 9" src="docs/slack-setup-guide/step-09.webp"></p>
 
-10. Open the Slack application and log in using an admin user account
+10. Open the Slack application and log in using an admin user account.
 
-11. Create a new public or private channel, such as #coffee (maybe use a little more imagination :wink:), and add a few test users to it
+11. Create a new public or private channel, such as #coffee (maybe use a little more imagination :wink:), and add a few test users to it.
 
 12. Right-click on the OpenCoffee app and select "View app details":
 
 <p align="center" width="100%"><img alt="Step 12" src="docs/slack-setup-guide/step-12.webp"></p>
 
-13. Copy the "Member ID", this value will be used in the OpenCoffee configuration file, value ```ignore_users```:
+13. Copy the "Member ID"; this value will be used for the `ignore_users` setting in your OpenCoffee configuration file:
 
 <p align="center" width="100%"><img alt="Step 13" src="docs/slack-setup-guide/step-13.webp"></p>
 
@@ -186,7 +186,7 @@ This token will be the value you'll use in the OpenCoffee configuration file, va
 
 <p align="center" width="100%"><img alt="Step 15" src="docs/slack-setup-guide/step-15.webp"></p>
 
-16. Copy the "Channel ID" located at the bottom of the "About" section, this value will be used in the OpenCoffee configuration file, value ```channel_id```:
+16. Copy the "Channel ID" from the bottom of the "About" section; this value will be used for the `channel_id` setting in your OpenCoffee configuration file:
 
 <p align="center" width="100%"><img alt="Step 16" src="docs/slack-setup-guide/step-16.webp"></p>
 
@@ -194,16 +194,16 @@ This token will be the value you'll use in the OpenCoffee configuration file, va
 
 To define your configuration file, you can start from ```config-sample.ini``` by creating a copy of it.
 
-The various entries that constitute it are documented in the sample file, the most important are:
+The various entries that constitute it are documented in the sample file; the most important are:
 
-* ```api_token```: Required for communicating with the Slack APIs, this value is obtained in step 9 of the Slack account setup process;
-* ```channel_id```: Required to identify the channel containing users involved in the OpenCoffee logic, this value is obtained in step 16 of the Slack account setup process;
+* ```api_token```: Required for communicating with the Slack APIs, this value is obtained in step 9 of the Slack account setup process.
+* ```channel_id```: Required to identify the channel containing users involved in the OpenCoffee logic, this value is obtained in step 16 of the Slack account setup process.
 * ```ignore_users```: A list of users belonging to the ```channel_id``` to be ignored.  
-  You must at least include the OpenCoffee users as explained in step 13 of the Slack account setup process;
-* ```generator_algorithm_type```: Determine the type of algorithm used to generate coffee break pairings.  
+  You must at least include the OpenCoffee users as explained in step 13 of the Slack account setup process.
+* ```generator_algorithm_type```: Determines the type of algorithm used to generate coffee break pairings.  
   Possible values are: ```simple``` or ```max-distance```.  
   The ```simple``` is the fastest algorithm and generates random combinations, while the ```max-distance``` is slower, but aims to create pairings of individuals who, through heuristics, tend to work less closely together.  
-  Default value is ```simple```.  
+  The default value is ```simple```.  
   ATTENTION: The use of ```max-distance``` requires the ```channels:read``` permission in the Slack app configuration.
 
 Of course, you can have different configuration files that involve different channels, languages, and any other combination of configurations.
@@ -245,8 +245,9 @@ Dependencies:
  * [pytest](https://docs.pytest.org/en) is licensed under [MIT License](https://opensource.org/licenses/MIT);
  * [Python](https://www.python.org) is licensed under [Python Software Foundation License (PSFL)](https://docs.python.org/3/license.html) by Python Software Foundation (PSF);
  * [Python Slack SDK](https://slack.dev/python-slack-sdk) is licensed under [MIT License](https://opensource.org/licenses/MIT) by Slack Technologies, LLC;
- * [SciPy](https://scipy.org) id distributed under a liberal [BSD license](https://github.com/scipy/scipy/blob/main/LICENSE.txt);
- * [tqdm](https://github.com/tqdm/tqdm) is licensed under [MIT License](https://opensource.org/licenses/MIT) and [other licenses](https://github.com/tqdm/tqdm/blob/master/LICENCE).
+ * [SciPy](https://scipy.org) is distributed under a liberal [BSD license](https://github.com/scipy/scipy/blob/main/LICENSE.txt);
+ * [tqdm](https://github.com/tqdm/tqdm) is licensed under [MIT License](https://opensource.org/licenses/MIT) and [other licenses](https://github.com/tqdm/tqdm/blob/master/LICENCE);
+ * [types-tqdm](https://pypi.org/project/types-tqdm/) is licensed under [Apache-2.0](https://opensource.org/license/apache-2-0).
 
 Images:
 
