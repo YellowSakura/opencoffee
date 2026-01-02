@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue)](https://opensource.org/licenses/MIT)
 [![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)](https://www.python.org)
-[![Poetry](https://img.shields.io/endpoint?url=https://python-poetry.org/badge/v0.json)](https://python-poetry.org/)
+[![uv](https://img.shields.io/badge/uv-blue.svg)](https://github.com/astral-sh/uv) 
 [![Linting: pylint](https://img.shields.io/badge/Linting-pylint-yellowgreen)](https://github.com/pylint-dev/pylint)
 
 <img align="left" width="100px" src="docs/coffee-cup.png">
@@ -26,21 +26,19 @@ While there are various open-source scripts that accomplish similar tasks, the p
 
 ## Getting started
 
-Run the following to install and launch OpenCoffee using [Poetry](https://python-poetry.org):
+Run the following to install and launch OpenCoffee using [uv](https://github.com/astral-sh/uv):
 
 ```console
 $ git clone https://github.com/YellowSakura/opencoffee.git
 $ cd opencoffee
-$ poetry install
-$ poetry run main --help
+$ uv venv
+$ source .venv/bin/activate
+$ uv pip install -e .
+$ uv run main --help
 ```
 
-N.B: Poetry is the dependency manager used by the project, for more information on how to install it, please refer to the [official documentation](https://python-poetry.org/docs).  
-Alternatively, you can simply run the following command for an easier setup:
-
-```console
-$ curl -sSL https://install.python-poetry.org | python3 -
-```
+N.B: `uv` is the dependency manager used by the project.  
+For more information on how to install it, please refer to the [official documentation](https://github.com/astral-sh/uv).
 
 To use the following commands, you need a valid configuration file named `config.ini`.  
 Alternatively, you can use any other configuration file by specifying it with the `--conf FILE/PATH` option.
@@ -50,13 +48,13 @@ For more details on how to manage a configuration file, please refer to the [Ope
 To execute an invitation step and send messages to pairs generated from your Slack channel, use the command:
 
 ```console
-$ poetry run main -a invitation
+$ uv run main -a invitation
 ```
 
 On the other hand, with the command:
 
 ```console
-$ poetry run main -a reminder
+$ uv run main -a reminder
 ```
 
 You can perform a reminder step by sending messages to the last pairs generated from the invitation step, reminding them to schedule a coffee date.  
@@ -66,30 +64,30 @@ The idea is to manage both of the previous commands with cron executions, for ex
 
 ---
 
-From a development standpoint, there are other useful commands available through [Poe the Poet](https://github.com/nat-n/poethepoet).
+From a development standpoint, there are other useful commands available through `uv`.
 
 Using the following command, you can execute a full static type checker using [Mypy](https://mypy-lang.org):
 
 ```console
-$ poetry run poe mypy
+$ uv run poe mypy
 ```
 
 You can perform static code analysis using [Pylint](https://pypi.org/project/pylint/) with the following command:
 
 ```console
-$ poetry run poe pylint
+$ uv run poe pylint
 ```
 
 For running a complete set of tests using [pytest](https://docs.pytest.org/en), use the following command:
 
 ```console
-$ poetry run poe pytest
+$ uv run poe pytest
 ```
 
 Finally, to assess the overall quality of OpenCoffee, you can use the following command, which executes all the previous commands:
 
 ```console
-$ poetry run poe quality
+$ uv run poe quality
 ```
 
 ## Permissions details
@@ -152,7 +150,7 @@ oauth_config:
 
 <p align="center" width="100%"><img alt="Step 6" src="docs/slack-setup-guide/step-06.webp"></p>
 
-7. [**Optional**] Edit the "Display Information," such as changing the description or the icon using the `docs/coffee-cup.png` file, and then click "Save":
+7. [**Optional**] Edit the "Display Information," such as changing the description or the. icon using the `docs/coffee-cup.png` file, and then click "Save":
 
 <p align="center" width="100%"><img alt="Step 7" src="docs/slack-setup-guide/step-07.webp"></p>
 
@@ -243,7 +241,6 @@ Dependencies:
 
  * [Argparse](https://docs.python.org/3/library/argparse.html) is licensed under [Python Software Foundation License (PSFL)](https://docs.python.org/3/license.htm) by Steven J. Bethard;
  * [Mypy](https://mypy-lang.org) is licensed under [MIT License](https://opensource.org/licenses/MIT);
- * [Poe the Poet](https://github.com/nat-n/poethepoet) is licensed under [MIT License](https://opensource.org/licenses/MIT);
  * [Pylint](https://github.com/pylint-dev/pylint) is licensed under [GPLv2 license](https://github.com/pylint-dev/pylint/blob/main/LICENSE) and [other licenses](https://github.com/pylint-dev/pylint#license);
  * [pytest](https://docs.pytest.org/en) is licensed under [MIT License](https://opensource.org/licenses/MIT);
  * [Python](https://www.python.org) is licensed under [Python Software Foundation License (PSFL)](https://docs.python.org/3/license.html) by Python Software Foundation (PSF);
