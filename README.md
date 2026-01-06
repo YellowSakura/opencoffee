@@ -22,7 +22,7 @@ While there are various open-source scripts that accomplish similar tasks, the p
     - [Slack account](#slack-account)
     - [OpenCoffee configuration](#opencoffee-configuration)
 4. [Translation](#translation)
-5. [Licences](#licences)
+5. [License](#license)
 
 ## Getting started
 
@@ -233,7 +233,7 @@ OpenCoffee uses a very small set of messages that require translation, so if you
 
 5. Change the `language` field in your `config.ini` file using your `%ISO CODE%`.
 
-## Licences
+## License
 
 The code is licensed under the [MIT](https://opensource.org/licenses/MIT) by [Yellow Sakura](https://www.yellowsakura.com), [support@yellowsakura.com](mailto:support@yellowsakura.com), see the LICENSE file.
 
