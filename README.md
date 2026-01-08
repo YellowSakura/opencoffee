@@ -31,9 +31,7 @@ Run the following to install and launch OpenCoffee using [uv](https://github.com
 ```console
 $ git clone https://github.com/YellowSakura/opencoffee.git
 $ cd opencoffee
-$ uv venv
-$ source .venv/bin/activate
-$ uv pip install -e .
+$ uv sync --extra dev
 $ uv run main --help
 ```
 
@@ -88,6 +86,27 @@ Finally, to assess the overall quality of OpenCoffee, you can use the following 
 
 ```console
 $ uv run poe quality
+```
+## Development Setup
+
+After cloning the repository, install all dependencies including development tools:
+
+```console
+$ uv sync --extra dev
+```
+
+This command will:
+
+- Create a virtual environment automatically
+- Install all production dependencies
+- Install development dependencies (mypy, pylint, pytest, etc.)
+- Lock the dependency versions in `uv.lock`
+
+To update all dependencies to their latest compatible versions:
+
+```console
+$ uv lock --upgrade
+$ uv sync --extra dev
 ```
 
 ## Permissions details
